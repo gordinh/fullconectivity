@@ -41,7 +41,7 @@ public class JanelaPrincipal extends Observable {
      */
     public void mostraJanela(){
 
-    // Intenciando os componentes gráficos
+    // Instanciando os componentes gráficos
         frame = new JFrame("Jogo da Velha");
         panel = new JPanel();
         button11 = new JButton();
