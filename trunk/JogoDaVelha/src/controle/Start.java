@@ -14,8 +14,8 @@ public class Start {
 
     public static void main(String[] args) {
 
-        //JanelaPrincipal janela = new JanelaPrincipal();
-          Controla_Janela_Principal controla = new Controla_Janela_Principal();
+        ControlaCliente controla = new ControlaCliente();
+          
     }
 
 }
