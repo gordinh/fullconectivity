@@ -6,12 +6,12 @@
 package visual;
 
 import controle.ControlaCliente;
-import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 /**
  * Essa classe é resposável por mostrar o usuário a opção de fazer login no jogo.
@@ -24,7 +24,7 @@ public class JanelaLogin {
     JFrame frame;
     JPanel panel;
     JLabel logo;
-    JTextArea nick;
+    JTextField nick;
     JButton enter;
    public String nickk;
 
@@ -40,7 +40,7 @@ public class JanelaLogin {
        frame = new JFrame("Jogo da Velha --Login");
        panel = new JPanel();
        logo = new JLabel();
-       nick = new JTextArea();
+       nick = new JTextField();
        enter = new JButton("Entrar");
 
        //Amarrando os componentes

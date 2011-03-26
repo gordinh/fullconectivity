@@ -5,8 +5,15 @@
 
 package controle;
 
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import visual.JanelaLogin;
 
 /**
@@ -19,6 +26,8 @@ import visual.JanelaLogin;
 public class ControlaCliente implements ActionListener{
 
    JanelaLogin jLogin;
+   DatagramSocket clienteSocket; 
+   
 
     public ControlaCliente(){
 
@@ -35,11 +44,15 @@ public class ControlaCliente implements ActionListener{
         
         if(e.getSource() == jLogin.getEnter()){
 
-            if(!jLogin.nickk.equalsIgnoreCase("")){
+            if(!jLogin.nickk.equalsIgnoreCase("") && jLogin.nickk.length()<=8){
                 //System.out.println(jLogin.getNick());
                 jLogin.Visible(false);
                 conectaServidor(jLogin.getNick());
+            } else{
+                JOptionPane.showMessageDialog(null, "Seu nick deve conter de 1 a 8 caracteres", "Login Inválido", 0);
+                
             }
+
         }
 
      
@@ -50,8 +63,31 @@ public class ControlaCliente implements ActionListener{
      * @param nick
      */
     public void conectaServidor(String nick){
-        
+
+        //Montando o pacote
+        try {
+
+            //Pegando ip do servidor  // nome da maquina linux-wo7e
+            InetAddress addr = InetAddress.getByName("linux-wo7e");
+
+            System.out.println(addr);
+
+            String solicitacao = "Login";
+            String pacote = solicitacao + "," + nick + "\n";
+            System.out.println(pacote);
+            
+        } catch (UnknownHostException ex) {
+           // Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
+            
+            JOptionPane.showMessageDialog(null, "Não foi possível encontrar o servidor", "Server Não Localizado", 0);
+        }
+
+
+
         System.out.println("Conectando \"" +  nick + "\" ao server...");
+
+        
+        
 
 
     }
