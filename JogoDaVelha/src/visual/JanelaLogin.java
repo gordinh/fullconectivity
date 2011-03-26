@@ -26,7 +26,38 @@ public class JanelaLogin {
     JLabel logo;
     JTextField nick;
     JButton enter;
-   public String nickk;
+
+    public JFrame getFrame() {
+        return frame;
+    }
+
+    public void setFrame(JFrame frame) {
+        this.frame = frame;
+    }
+
+    public JLabel getLogo() {
+        return logo;
+    }
+
+    public void setLogo(JLabel logo) {
+        this.logo = logo;
+    }
+
+    public JTextField getNick() {
+        return nick;
+    }
+
+    public void setNick(JTextField nick) {
+        this.nick = nick;
+    }
+
+    public JPanel getPanel() {
+        return panel;
+    }
+
+    public void setPanel(JPanel panel) {
+        this.panel = panel;
+    }
 
     public JanelaLogin (ControlaCliente ctrlCLI){
 
@@ -70,18 +101,9 @@ public class JanelaLogin {
        
     }
 
-    public JButton getEnter(){
-        InternalGetNick();
+    public JButton getEnter(){        
         return enter;
-    }
-
-    private void InternalGetNick(){
-        nickk = nick.getText();
-    }
-
-    public String getNick(){
-        return nickk;
-    }
+    }    
 
     public void Visible(boolean b){
         

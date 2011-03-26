@@ -14,6 +14,7 @@ import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import modelo.Cliente;
 import visual.JanelaLogin;
 
 /**
@@ -32,6 +33,7 @@ public class ControlaCliente implements ActionListener{
     public ControlaCliente(){
 
         login();
+        Cliente c = new Cliente();
     }
 
     public void login(){
@@ -42,12 +44,14 @@ public class ControlaCliente implements ActionListener{
 
     public void actionPerformed(ActionEvent e) {
         
+        String nick = jLogin.getNick().getText();
+
         if(e.getSource() == jLogin.getEnter()){
 
-            if(!jLogin.nickk.equalsIgnoreCase("") && jLogin.nickk.length()<=8){
+            if(!nick.equalsIgnoreCase("") && nick.length() <= 8 ){
                 //System.out.println(jLogin.getNick());
                 jLogin.Visible(false);
-                conectaServidor(jLogin.getNick());
+                conectaServidor(nick);
             } else{
                 JOptionPane.showMessageDialog(null, "Seu nick deve conter de 1 a 8 caracteres", "Login Inválido", 0);
                 
