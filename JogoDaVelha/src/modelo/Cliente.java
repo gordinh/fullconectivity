@@ -19,15 +19,25 @@ public class Cliente {
     private String nick;
     private String ip;
     private int porta;
+    private boolean emJogo;
 
     public Cliente (String nick,String ip, int porta){
         this.nick = nick;
         this.ip = ip;
         this.porta = porta;
+        this.emJogo = false;
     }
 
     public Cliente (){
 
+    }
+
+    public boolean isEmJogo() {
+        return emJogo;
+    }
+
+    public void setEmJogo(boolean emJogo) {
+        this.emJogo = emJogo;
     }
     
     public String getIp() {
