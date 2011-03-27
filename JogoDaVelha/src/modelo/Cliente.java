@@ -17,16 +17,12 @@ import java.net.UnknownHostException;
 public class Cliente {
 
     private String nick;
-    private InetAddress ip;
+    private String ip;
     private int porta;
 
-    public Cliente (String nick, int porta){
+    public Cliente (String nick,String ip, int porta){
         this.nick = nick;
-        try {
-            this.ip = InetAddress.getLocalHost();
-        } catch (UnknownHostException ex) {
-            System.out.println(ex.getMessage());
-        }
+        this.ip = ip;
         this.porta = porta;
     }
 
@@ -34,11 +30,11 @@ public class Cliente {
 
     }
     
-    public InetAddress getIp() {
+    public String getIp() {
         return ip;
     }
 
-    public void setIp(InetAddress ip) {
+    public void setIp(String ip) {
         this.ip = ip;
     }
 

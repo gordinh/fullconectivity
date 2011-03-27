@@ -16,7 +16,7 @@ public class Start {
 
     public static void main(String[] args) {
 
-        ControlaCliente controla = new ControlaCliente();
+       ControlaCliente controla = new ControlaCliente();
         
     }
 
