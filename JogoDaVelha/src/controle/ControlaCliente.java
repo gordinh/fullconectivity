@@ -10,8 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import modelo.Cliente;
 import visual.JanelaLogin;
@@ -66,19 +64,17 @@ public class ControlaCliente implements ActionListener{
 
     /**
      * Metodo que fará a conexão do usuário com o servidor
-     * @param nick
+     * @
      */
     public void conectaServidor(){
 
         montarPacote();
         requisitarLista();
-
-               
+        
     }
 
     public void montarPacote(){
-
-        //Montando o pacote
+        
         InetAddress serverip = null;
         try {
 

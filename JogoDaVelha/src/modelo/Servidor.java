@@ -57,6 +57,7 @@ public class Servidor implements Runnable{
     }
 
     public void run() {
+        
         String sentencaMod, Result;
         DatagramSocket serverSocket = null;
         byte[] receiveData = new byte[1024];
@@ -80,15 +81,17 @@ public class Servidor implements Runnable{
             
             sentencaMod = (new String(receivePacket.getData()));
             System.out.println(sentencaMod);
+
             Result = "Roger!!";
             InetAddress endIP = receivePacket.getAddress();
             int port = receivePacket.getPort();
             sendData = Result.getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, endIP, port);
+            
             try {
                 serverSocket.send(sendPacket);
             } catch (IOException ex) {
-                Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println(ex.getMessage());
             }
         }
     }
