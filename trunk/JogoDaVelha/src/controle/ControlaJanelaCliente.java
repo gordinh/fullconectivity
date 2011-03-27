@@ -30,24 +30,7 @@ public class ControlaJanelaCliente implements Observer {
 
     public void update(Observable o, Object arg) {
 
-        String crtl = (String) arg;
-
-       /* char a = crtl.charAt(0);
-        char b = crtl.charAt(1);
-
-        String a2 = Character.toString(a);
-        String b2 = Character.toString(b);
-
-        int i = Integer.parseInt(a2);
-        int j = Integer.parseInt(b2);
-        
-        int enableRound = mat.checaPosicao(i, j); */
-
-       // boolean enableRound = mat.checaBooleanMatriz2(crtl);
-
-       
-
-      //  if (enableRound == false) {
+        String crtl = (String) arg;     
 
             round++; // atualiza contador da partida
 
@@ -79,10 +62,5 @@ public class ControlaJanelaCliente implements Observer {
                 }
 
             }
-       // }
-
-
-
-
     }
 }

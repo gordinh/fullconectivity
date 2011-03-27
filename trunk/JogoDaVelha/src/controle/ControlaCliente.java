@@ -6,13 +6,19 @@
 package controle;
 
 
+import controle.ControlaSalaDeEspera;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import modelo.Cliente;
 import visual.JanelaLogin;
+import visual.SalaDeEspera;
+import visual.SalaDeEspera2;
 
 /**
  *
@@ -24,15 +30,18 @@ import visual.JanelaLogin;
 public class ControlaCliente implements ActionListener{
 
    JanelaLogin jLogin;
-   DatagramSocket clienteSocket;
-   String nick;
-   
+   private DatagramSocket clienteSocket;
+   private String nick;
+   private ArrayList<Cliente> clientes;
+   private boolean emJogo;
+   private ControlaJanelaCliente controle;
+   private ControlaSalaDeEspera controlaSalaDeEspera;
 
     public ControlaCliente(){
-
+        
+        clientes = new ArrayList<Cliente>();
+        emJogo = false;
         login();
-        
-        
     }
 
     public void login(){
@@ -67,6 +76,7 @@ public class ControlaCliente implements ActionListener{
 
         montarPacote();
         cadastrarNaLista();
+        receberLista();
         
     }
 
@@ -122,6 +132,75 @@ public class ControlaCliente implements ActionListener{
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Erro no Envio da requisição da lista", "Erro na Requisição", 0);
         }
+    }
+
+    public void receberLista(){
+
+        if(clientes.size() > 0){ // No caso do usuário ja possuir uma lista, a zera e refaz toda.
+            clientes.clear();
+        }
+
+        byte[] b = new byte[1024];
+        DatagramPacket receivePacket = new DatagramPacket(b, b.length);
+
+        try {
+            clienteSocket.receive(receivePacket);
+        } catch (IOException ex) {
+            Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        String s = new String(receivePacket.getData());
+
+        String[] t = s.split(","); // O tamanho desse vetor vai ser igual a quantidade de pessoas conectadas ao servidor
+
+        for(int i = 0; i < t.length; i++){
+            String[] u = t[i].split("|");
+            Cliente c = new Cliente(u[0], u[1], Integer.parseInt(u[2])); // Na ordem: u[0] = Nick, u[1] = ip e u[2] = porta
+            clientes.add(c);
+        }
+        
+            controlaSalaDeEspera = new ControlaSalaDeEspera(controlaSalaDeEspera, clientes);
+
+    }
+
+    public DatagramSocket getClienteSocket() {
+        return clienteSocket;
+    }
+
+    public void setClienteSocket(DatagramSocket clienteSocket) {
+        this.clienteSocket = clienteSocket;
+    }
+
+    public ArrayList<Cliente> getClientes() {
+        return clientes;
+    }
+
+    public void setClientes(ArrayList<Cliente> clientes) {
+        this.clientes = clientes;
+    }
+
+    public boolean isEmJogo() {
+        return emJogo;
+    }
+
+    public void setEmJogo(boolean emJogo) {
+        this.emJogo = emJogo;
+    }
+
+    public JanelaLogin getjLogin() {
+        return jLogin;
+    }
+
+    public void setjLogin(JanelaLogin jLogin) {
+        this.jLogin = jLogin;
+    }
+
+    public String getNick() {
+        return nick;
+    }
+
+    public void setNick(String nick) {
+        this.nick = nick;
     }
 
 }
