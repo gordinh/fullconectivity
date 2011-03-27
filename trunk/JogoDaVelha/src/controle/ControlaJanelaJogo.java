@@ -13,13 +13,13 @@ import visual.JanelaPrincipal;
  *
  * @author andre
  */
-public class ControlaJanelaCliente implements Observer {
+public class ControlaJanelaJogo implements Observer {
 
     JanelaPrincipal janela;
     Matriz mat;
     int round = 0;
 
-    public ControlaJanelaCliente() {
+    public ControlaJanelaJogo() {
 
         janela = new JanelaPrincipal();
         janela.addObserver(this);

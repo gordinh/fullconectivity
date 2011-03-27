@@ -6,7 +6,6 @@
 package controle;
 
 
-import controle.ControlaSalaDeEspera;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -17,8 +16,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import modelo.Cliente;
 import visual.JanelaLogin;
-import visual.SalaDeEspera;
-import visual.SalaDeEspera2;
+
 
 /**
  *
@@ -27,15 +25,15 @@ import visual.SalaDeEspera2;
  *
  * @author andre
  */
-public class ControlaCliente implements ActionListener{
+public class ControlaCliente implements ActionListener, Runnable{
 
    JanelaLogin jLogin;
    private DatagramSocket clienteSocket;
    private String nick;
    private ArrayList<Cliente> clientes;
-   private boolean emJogo;
-   private ControlaJanelaCliente controle;
+   private boolean emJogo;   
    private ControlaSalaDeEspera controlaSalaDeEspera;
+   private ControlaJanelaJogo controlaJanelaJogo;
 
     public ControlaCliente(){
         
@@ -77,7 +75,9 @@ public class ControlaCliente implements ActionListener{
         montarPacote();
         cadastrarNaLista();
         receberLista();
-        
+        verificarDesafio();
+        //EntrarNoJogo();
+
     }
 
     public void montarPacote(){
@@ -163,6 +163,58 @@ public class ControlaCliente implements ActionListener{
 
     }
 
+    /**
+     *
+     * Método utilizado para aguardar convite de outros jogadores
+     */
+    public void verificarDesafio(){
+
+        boolean saiWhile = true;
+
+        while(saiWhile){
+
+            DatagramPacket desafio = new DatagramPacket(new byte[1024], 1024);
+
+            try {
+                clienteSocket.receive(desafio);
+            } catch (IOException ex) {
+                Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            String s = new String(desafio.getData());
+
+            String[] t = s.split("|");
+            if (t[0].equalsIgnoreCase("Desafio")){
+                String mensagem = "Você recebeu um convite de jogo de " + t[1] + "\n" + "Aceitar?";
+                int i = JOptionPane.showConfirmDialog(null, mensagem, "Cofirmação de Desafio", 1);
+                if (i == 0){
+                    saiWhile = false;
+                    byte[] b = new byte[1024];
+                    b = "Aceito".getBytes();
+                    DatagramPacket pacoteEnvio = new DatagramPacket(b, b.length, desafio.getAddress(), desafio.getPort());
+                    try {
+                        clienteSocket.send(pacoteEnvio);
+                    } catch (IOException ex) {
+                        Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    break;
+                } else {
+                    byte[] b = new byte[1024];
+                    b = "Negado".getBytes();
+                    DatagramPacket pacoteEnvio = new DatagramPacket(b, b.length, desafio.getAddress(), desafio.getPort());
+                    try {
+                        clienteSocket.send(pacoteEnvio);
+                    } catch (IOException ex) {
+                        Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }        
+    }
+
+    public void Desafiar(){
+        
+    }
+
     public DatagramSocket getClienteSocket() {
         return clienteSocket;
     }
@@ -201,6 +253,10 @@ public class ControlaCliente implements ActionListener{
 
     public void setNick(String nick) {
         this.nick = nick;
+    }
+
+    public void run() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

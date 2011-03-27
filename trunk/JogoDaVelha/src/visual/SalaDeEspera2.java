@@ -5,7 +5,7 @@
 
 package visual;
 
-import controle.ControlaCliente;
+
 import controle.ControlaSalaDeEspera;
 import java.util.ArrayList;
 import javax.swing.*;
@@ -36,9 +36,7 @@ public class SalaDeEspera2 {
        panel = new JPanel();     
 
        frame.getContentPane().add(panel);
-       lista = new JList(itens);
-       //itens.addElement("Gedson");
-       //itens.addElement("Maru");
+       lista = new JList(itens);       
 
        //Propriedades da Janela
        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -66,4 +64,11 @@ public class SalaDeEspera2 {
             itens.addElement(clientes.get(i).getNick());
         }
     }
+
+    public void visible(boolean b){
+
+        frame.setVisible(b);
+    }
+
+
 }
