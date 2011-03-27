@@ -5,6 +5,11 @@
 
 package modelo;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author douglas
@@ -12,12 +17,16 @@ package modelo;
 public class Cliente {
 
     private String nick;
-    private String ip;
-    private String porta;
+    private InetAddress ip;
+    private int porta;
 
-    public Cliente (String nick, String ip, String porta){
+    public Cliente (String nick, int porta){
         this.nick = nick;
-        this.ip = ip;
+        try {
+            this.ip = InetAddress.getLocalHost();
+        } catch (UnknownHostException ex) {
+            System.out.println(ex.getMessage());
+        }
         this.porta = porta;
     }
 
@@ -25,11 +34,11 @@ public class Cliente {
 
     }
     
-    public String getIp() {
+    public InetAddress getIp() {
         return ip;
     }
 
-    public void setIp(String ip) {
+    public void setIp(InetAddress ip) {
         this.ip = ip;
     }
 
@@ -41,11 +50,11 @@ public class Cliente {
         this.nick = nick;
     }
 
-    public String getPorta() {
+    public int getPorta() {
         return porta;
     }
 
-    public void setPorta(String porta) {
+    public void setPorta(int porta) {
         this.porta = porta;
     }
 

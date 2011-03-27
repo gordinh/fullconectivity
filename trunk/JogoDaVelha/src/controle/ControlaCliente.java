@@ -5,12 +5,11 @@
 
 package controle;
 
-import java.awt.TrayIcon.MessageType;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.io.IOException;
+import java.net.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -27,13 +26,15 @@ import visual.JanelaLogin;
 public class ControlaCliente implements ActionListener{
 
    JanelaLogin jLogin;
-   DatagramSocket clienteSocket; 
+   DatagramSocket clienteSocket;
+   Cliente cliente;
    
 
     public ControlaCliente(){
 
         login();
-        Cliente c = new Cliente();
+        cliente = new Cliente();
+        
     }
 
     public void login(){
@@ -49,16 +50,17 @@ public class ControlaCliente implements ActionListener{
         if(e.getSource() == jLogin.getEnter()){
 
             if(!nick.equalsIgnoreCase("") && nick.length() <= 8 ){
-                //System.out.println(jLogin.getNick());
-                jLogin.Visible(false);
-                conectaServidor(nick);
-            } else{
-                JOptionPane.showMessageDialog(null, "Seu nick deve conter de 1 a 8 caracteres", "Login Inválido", 0);
                 
+                cliente.setNick(nick);
+                jLogin.Visible(false);
+                conectaServidor();
+                
+            } else{
+
+                JOptionPane.showMessageDialog(null, "Seu nick deve conter de 1 a 8 caracteres", "Login Inválido", 0);                
             }
 
         }
-
      
     }
 
@@ -66,33 +68,49 @@ public class ControlaCliente implements ActionListener{
      * Metodo que fará a conexão do usuário com o servidor
      * @param nick
      */
-    public void conectaServidor(String nick){
+    public void conectaServidor(){
+
+        montarPacote();
+        requisitarLista();
+
+               
+    }
+
+    public void montarPacote(){
 
         //Montando o pacote
+        InetAddress serverip = null;
         try {
 
-            //Pegando ip do servidor  // nome da maquina linux-wo7e
-            InetAddress addr = InetAddress.getByName("linux-wo7e");
+            // Pôr nome do servidor
+            serverip = InetAddress.getByName("linux-wo7e");
+            clienteSocket = new DatagramSocket(5000, serverip);
+            System.out.println(serverip.toString());          
 
-            System.out.println(addr);
+            System.out.println("Conectando \"" +  cliente.getNick() + "\" ao server...");
 
-            String solicitacao = "Login";
-            String pacote = solicitacao + "," + nick + "\n";
-            System.out.println(pacote);
-            
         } catch (UnknownHostException ex) {
-           // Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
-            
             JOptionPane.showMessageDialog(null, "Não foi possível encontrar o servidor", "Server Não Localizado", 0);
         }
-
-
-
-        System.out.println("Conectando \"" +  nick + "\" ao server...");
-
-        
-        
-
-
+        catch (SocketException se){
+            JOptionPane.showMessageDialog(null, "Verificar criação do Socket", "Erro no Socket", 0);
+        }
+        catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
+
+    public void requisitarLista(){
+
+        byte[] b = new byte[1024];
+        String pacote = "Login" + cliente.getNick() + "\n";
+        b = pacote.getBytes();
+        DatagramPacket packet = new DatagramPacket(b, b.length, cliente.getIp(), cliente.getPorta());
+        try {
+            clienteSocket.send(packet);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Erro no Envio da requisição da lista", "Erro na Requisição", 0);
+        }
+    }
+
 }
