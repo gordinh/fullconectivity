@@ -25,13 +25,13 @@ public class ControlaCliente implements ActionListener{
 
    JanelaLogin jLogin;
    DatagramSocket clienteSocket;
-   Cliente cliente;
+   String nick;
    
 
     public ControlaCliente(){
 
         login();
-        cliente = new Cliente();
+        
         
     }
 
@@ -43,13 +43,12 @@ public class ControlaCliente implements ActionListener{
 
     public void actionPerformed(ActionEvent e) {
         
-        String nick = jLogin.getNick().getText();
+        nick = jLogin.getNick().getText();
 
         if(e.getSource() == jLogin.getEnter()){
 
-            if(!nick.equalsIgnoreCase("") && nick.length() <= 8 ){
+            if(!nick.equalsIgnoreCase("") && nick.length() <= 8 ){                
                 
-                cliente.setNick(nick);
                 jLogin.Visible(false);
                 conectaServidor();
                 
@@ -57,9 +56,7 @@ public class ControlaCliente implements ActionListener{
 
                 JOptionPane.showMessageDialog(null, "Seu nick deve conter de 1 a 8 caracteres", "Login Inválido", 0);                
             }
-
-        }
-     
+        }     
     }
 
     /**
@@ -69,7 +66,7 @@ public class ControlaCliente implements ActionListener{
     public void conectaServidor(){
 
         montarPacote();
-        requisitarLista();
+        cadastrarNaLista();
         
     }
 
@@ -83,7 +80,7 @@ public class ControlaCliente implements ActionListener{
             clienteSocket = new DatagramSocket(5000, serverip);
             System.out.println(serverip.toString());          
 
-            System.out.println("Conectando \"" +  cliente.getNick() + "\" ao server...");
+            System.out.println("Conectando \"" +  nick + "\" ao server...");
 
         } catch (UnknownHostException ex) {
             JOptionPane.showMessageDialog(null, "Não foi possível encontrar o servidor", "Server Não Localizado", 0);
@@ -96,13 +93,31 @@ public class ControlaCliente implements ActionListener{
         }
     }
 
+    public void cadastrarNaLista(){
+
+        
+        String pacote = "Login" + "|" + nick;
+
+        byte[] b = new byte[pacote.getBytes().length];
+        b = pacote.getBytes();
+        
+        try {
+            DatagramPacket packet = new DatagramPacket(b, b.length, InetAddress.getLocalHost(), 5000);
+            clienteSocket.send(packet);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Erro no Envio da requisição da lista", "Erro na Requisição", 0);
+        }        
+    }
+
     public void requisitarLista(){
 
-        byte[] b = new byte[1024];
-        String pacote = "Login" + cliente.getNick() + "\n";
+        String pacote = "Lista" + "|" + nick;
+
+        byte[] b = new byte[pacote.getBytes().length];
         b = pacote.getBytes();
-        DatagramPacket packet = new DatagramPacket(b, b.length, cliente.getIp(), cliente.getPorta());
+
         try {
+            DatagramPacket packet = new DatagramPacket(b, b.length, InetAddress.getLocalHost(), 5000);
             clienteSocket.send(packet);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Erro no Envio da requisição da lista", "Erro na Requisição", 0);
