@@ -216,6 +216,7 @@ public class ControlaCliente implements ActionListener, Runnable{
                     } catch (IOException ex) {
                         Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    EntrarNoJogo(t[1], desafio);
                     break;
 
                 } else {
@@ -246,10 +247,40 @@ public class ControlaCliente implements ActionListener, Runnable{
         verificarDesafio();
     }
 
-    public void EntrarNoJogo(){
+    public void EntrarNoJogo(String nick, DatagramPacket desafio){
 
+        //Algoritmo de quem convidou
+        try {            
+            socket.receive(desafio);
+        } catch (IOException ex) {
+            Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String[] sentenca = LerMensagem(desafio);
+        if(sentenca[0].equals("Aceito")){
+            oponente = new Cliente(sentenca[1], desafio.getAddress().getHostAddress(), desafio.getPort());
+            controlaJanelaJogo = new ControlaJanelaJogo();
+        }
+
+        //Algoritmo de quem foi convidado
+        emJogo = true;
         controlaJanelaJogo = new ControlaJanelaJogo();
-        
+        oponente = new Cliente(nick, desafio.getAddress().getHostAddress(), desafio.getPort());
+        controlaJanelaJogo.getJanela().setEditFrame(false);
+
+    }
+
+    /**
+     * Método para receber a mensagem e quebrar com o split.
+     * @param DatagramPacket PacoteRecebido
+     * @return s
+     */
+    public String[] LerMensagem(DatagramPacket pacoteRecebido){
+
+        String sentenca = (new String(pacoteRecebido.getData()));
+        String[] s = new String[1];
+        s = sentenca.split("|");
+        return s;
+
     }
 
     public DatagramSocket getClienteSocket() {
