@@ -15,10 +15,10 @@ import visual.SalaDeEspera2;
  */
 public class ControlaSalaDeEspera {
 
-    private SalaDeEspera2 salaDeEspera;
+    /*private*/ public SalaDeEspera2 salaDeEspera;
 
-    public ControlaSalaDeEspera(ControlaSalaDeEspera ctrl, ArrayList<Cliente> array){
-        salaDeEspera = new SalaDeEspera2(ctrl, array);
+    public ControlaSalaDeEspera(/*ControlaSalaDeEspera ctrl,*/ ArrayList<Cliente> array){
+        salaDeEspera = new SalaDeEspera2(this, array);
     }
 
     

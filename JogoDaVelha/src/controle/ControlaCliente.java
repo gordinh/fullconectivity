@@ -170,7 +170,7 @@ public class ControlaCliente implements ActionListener, Runnable{
             clientes.add(c);
         }
         
-            controlaSalaDeEspera = new ControlaSalaDeEspera(controlaSalaDeEspera, clientes);
+            controlaSalaDeEspera = new ControlaSalaDeEspera(/*controlaSalaDeEspera,*/ clientes);
 
     }
 
