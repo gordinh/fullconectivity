@@ -72,7 +72,7 @@ public class ControlaCliente implements ActionListener, Runnable{
 
     /**
      * Metodo que fará a conexão do usuário com o servidor
-     * @
+     * 
      */
     public void conectaServidor(){
 
@@ -84,6 +84,10 @@ public class ControlaCliente implements ActionListener, Runnable{
 
     }
 
+    /**
+     * Método para montagem do pacote a ser enviado ao servidor, requisitando
+     * para ser adicionado na lista
+     */
     public void montarPacote(){
         
         InetAddress serverip = null;
@@ -107,6 +111,9 @@ public class ControlaCliente implements ActionListener, Runnable{
         }
     }
 
+    /**
+     * Método encarregado de enviar a requisição para entrar na lista
+     */
     public void cadastrarNaLista(){
 
         
