@@ -17,7 +17,7 @@ import javax.swing.JTextArea;
  *
  * @author andre
  */
-public class JanelaPrincipal extends Observable {
+public class JanelaJogo extends Observable {
 
 
 // Declarando os componentes gráficos
@@ -29,7 +29,7 @@ public class JanelaPrincipal extends Observable {
             button31, button32, button33;
     JTextArea text;
     
-    public JanelaPrincipal() {
+    public JanelaJogo() {
 
         mostraJanela();
     }

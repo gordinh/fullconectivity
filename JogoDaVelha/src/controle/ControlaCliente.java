@@ -18,6 +18,7 @@ import modelo.Cliente;
 import visual.JanelaLogin;
 
 
+
 /**
  *
  * Essa classe deve gerenciar todas as ações do jogador. gerindo o fluxo
@@ -28,17 +29,19 @@ import visual.JanelaLogin;
 public class ControlaCliente implements ActionListener, Runnable{
 
    JanelaLogin jLogin;
-   private DatagramSocket clienteSocket;
+   private DatagramSocket socket;
    private String nick;
    private ArrayList<Cliente> clientes;
    private boolean emJogo;   
    private ControlaSalaDeEspera controlaSalaDeEspera;
    private ControlaJanelaJogo controlaJanelaJogo;
+   private Cliente oponente;
 
     public ControlaCliente(){
         
         clientes = new ArrayList<Cliente>();
         emJogo = false;
+        oponente = null;
         login();
     }
 
@@ -95,8 +98,11 @@ public class ControlaCliente implements ActionListener, Runnable{
 
             // Pôr nome do servidor
             serverip = InetAddress.getByName("linux-wo7e");
-            clienteSocket = new DatagramSocket(5000, serverip);
-            System.out.println(serverip.toString());          
+
+            // Setando o socket para mandar mensagem para o servidor.
+            socket = new DatagramSocket(5000, serverip);
+
+            // System.out.println(serverip.toString());
 
             System.out.println("Conectando \"" +  nick + "\" ao server...");
 
@@ -115,7 +121,6 @@ public class ControlaCliente implements ActionListener, Runnable{
      * Método encarregado de enviar a requisição para entrar na lista
      */
     public void cadastrarNaLista(){
-
         
         String pacote = "Login" + "|" + nick;
 
@@ -124,7 +129,7 @@ public class ControlaCliente implements ActionListener, Runnable{
         
         try {
             DatagramPacket packet = new DatagramPacket(b, b.length, InetAddress.getLocalHost(), 5000);
-            clienteSocket.send(packet);
+            socket.send(packet);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Erro no Envio da requisição da lista", "Erro na Requisição", 0);
         }        
@@ -139,7 +144,7 @@ public class ControlaCliente implements ActionListener, Runnable{
 
         try {
             DatagramPacket packet = new DatagramPacket(b, b.length, InetAddress.getLocalHost(), 5000);
-            clienteSocket.send(packet);
+            socket.send(packet);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Erro no Envio da requisição da lista", "Erro na Requisição", 0);
         }
@@ -147,7 +152,7 @@ public class ControlaCliente implements ActionListener, Runnable{
 
     public void receberLista(){
 
-        if(clientes.size() > 0){ // No caso do usuário ja possuir uma lista, a zera e refaz toda.
+        if(!clientes.isEmpty()){ // No caso do usuário ja possuir uma lista, a zera e refaz toda.
             clientes.clear();
         }
 
@@ -155,7 +160,7 @@ public class ControlaCliente implements ActionListener, Runnable{
         DatagramPacket receivePacket = new DatagramPacket(b, b.length);
 
         try {
-            clienteSocket.receive(receivePacket);
+            socket.receive(receivePacket);
         } catch (IOException ex) {
             Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -170,7 +175,7 @@ public class ControlaCliente implements ActionListener, Runnable{
             clientes.add(c);
         }
         
-            controlaSalaDeEspera = new ControlaSalaDeEspera(/*controlaSalaDeEspera,*/ clientes);
+        controlaSalaDeEspera = new ControlaSalaDeEspera(clientes);
 
     }
 
@@ -187,7 +192,7 @@ public class ControlaCliente implements ActionListener, Runnable{
             DatagramPacket desafio = new DatagramPacket(new byte[1024], 1024);
 
             try {
-                clienteSocket.receive(desafio);
+                socket.receive(desafio);
             } catch (IOException ex) {
                 Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -207,7 +212,7 @@ public class ControlaCliente implements ActionListener, Runnable{
                     DatagramPacket pacoteEnvio = new DatagramPacket(b, b.length, desafio.getAddress(), desafio.getPort());
 
                     try {
-                        clienteSocket.send(pacoteEnvio);
+                        socket.send(pacoteEnvio);
                     } catch (IOException ex) {
                         Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -220,7 +225,7 @@ public class ControlaCliente implements ActionListener, Runnable{
                     DatagramPacket pacoteEnvio = new DatagramPacket(b, b.length, desafio.getAddress(), desafio.getPort());
 
                     try {
-                        clienteSocket.send(pacoteEnvio);
+                        socket.send(pacoteEnvio);
                     } catch (IOException ex) {
                         Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -234,19 +239,25 @@ public class ControlaCliente implements ActionListener, Runnable{
 
         DatagramPacket dp = new DatagramPacket(new byte[1024], 1024, ia, porta);
         try {
-            clienteSocket.send(dp);
+            socket.send(dp);
         } catch (IOException ex) {
             Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
         verificarDesafio();
     }
 
+    public void EntrarNoJogo(){
+
+        controlaJanelaJogo = new ControlaJanelaJogo();
+        
+    }
+
     public DatagramSocket getClienteSocket() {
-        return clienteSocket;
+        return socket;
     }
 
     public void setClienteSocket(DatagramSocket clienteSocket) {
-        this.clienteSocket = clienteSocket;
+        this.socket = clienteSocket;
     }
 
     public ArrayList<Cliente> getClientes() {
