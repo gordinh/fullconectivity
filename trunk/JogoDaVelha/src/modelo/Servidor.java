@@ -22,7 +22,7 @@ public class Servidor implements Runnable{
 
     public Servidor(){
 
-       clientes = new ArrayList();
+       clientes = new ArrayList<Cliente>();
         try {
             ip = InetAddress.getLocalHost().toString();
         } catch (UnknownHostException ex) {

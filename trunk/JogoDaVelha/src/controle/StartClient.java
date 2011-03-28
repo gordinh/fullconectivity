@@ -5,31 +5,17 @@
 
 package controle;
 
-import javax.swing.JOptionPane;
-import visual.SalaDeEspera2;
-
-
-
-
 /**
  *
  * @author andre
  */
-public class StartClient implements Runnable{
+public class StartClient{
 
     public static void main(String[] args) {
 
         ControlaCliente controla = new ControlaCliente();
         Thread t = new Thread(controla);
-        t.start();
-            
+        t.start();            
 
     }
-
-    public void run() {
-        for(int i = 0; i == 5; i++){
-            System.out.println(i);
-        }
-    }
-
 }

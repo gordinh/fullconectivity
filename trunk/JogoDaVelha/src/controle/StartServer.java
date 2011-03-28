@@ -22,6 +22,7 @@ public class StartServer {
         Servidor s = new Servidor();
         Thread t = new Thread(s);
         t.start();
+        
     }
 
 }
