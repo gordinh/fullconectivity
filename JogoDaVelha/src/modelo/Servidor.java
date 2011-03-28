@@ -15,6 +15,7 @@ import java.util.ArrayList;
  */
 public class Servidor implements Runnable{
 
+    
     private ArrayList<Cliente> clientes;
     private String ip;
     private int porta;
@@ -61,10 +62,20 @@ public class Servidor implements Runnable{
         clientes.add(c);
     }
 
+    /**
+     *
+     * Método para montar a String que será enviada para o cliente receptor
+     * contendo os dados dos usuários conectados até então.
+     * @param nick
+     * @return String ja convertida em bytes
+     */
     public byte[] MontarStringClientes(String nick){
 
         String s = new String();
-
+        // A String no caso vai conter os seguintes dados:
+        //Nick|Ip|Porta e uma virgula para separara usuarios
+        //diferentes. Ex.: André|10.65.99.33|5000, Douglas|10.65.128.75|2495, etc...
+        
         for(int i = 0;i < clientes.size(); i++){
             if(!clientes.get(i).getNick().equalsIgnoreCase(nick))
                 s = s + (clientes.get(i).getNick())+ "|" + clientes.get(i).getIp()+ "|" + clientes.get(i).getPorta() + ",";
@@ -72,26 +83,36 @@ public class Servidor implements Runnable{
         return s.getBytes();
     }
 
+    /**
+     *
+     * Método para enviar a lista de pessoas conectadas
+     * para alguma cliente que requisite
+     * @param dp
+     * @param nick
+     */
     public void retornaLista(DatagramPacket dp, String nick){
 
-            //Depois de adicionar na lista, responde com o retorno da lista atualizada
-            
+            //Depois de adicionar na lista, responde com o retorno da lista atualizada           
             byte[] sendData = new byte[MontarStringClientes(nick).length];
             sendData = MontarStringClientes(nick);
             InetAddress endIP = dp.getAddress();
-            int port = dp.getPort();            
+            int port = dp.getPort();
+
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, endIP, port);
             
             try {
                 serverSocket.send(sendPacket);
             } catch (IOException ex) {
                 System.out.println(ex.getMessage());
-            }      
-
+            }
     }
-    public void run() {
-        
-        String sentencaMod;
+
+    /**
+     *
+     * Método de inicialização da rotina de recepção de dados do servidor
+     *
+     */
+    public void run() {       
 
         byte[] receiveData = new byte[1024];        
 
@@ -105,30 +126,64 @@ public class Servidor implements Runnable{
         
         while (true) {
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+
             try {
                 serverSocket.receive(receivePacket);
             } catch (IOException ex) {
                 System.out.println(ex.getMessage());
             }
             
-            sentencaMod = (new String(receivePacket.getData()));
-            System.out.println(sentencaMod);
+            //System.out.println(sentencaMod);
 
             String[] s = new String[1];
-            s =  sentencaMod.split("|");
+            s = LerMensagem(receivePacket);
 
-            if(s[0].equalsIgnoreCase("Login")){
+            verificarMensagemCadastro(s, receivePacket);
 
-                addNaLista(s[1], receivePacket.getAddress(), receivePacket.getPort());
-                retornaLista(receivePacket, s[1]);
-            }
-
-            else if(s[0].equalsIgnoreCase("Lista")){
-                    retornaLista(receivePacket, s[1]);
-        }
+            verificarMensagemLista(s, receivePacket);            
       }
    }
+
+    /**
+     * Método para receber a mensagem e quebrar com o split.
+     * @param DatagramPacket PacoteRecebido
+     * @return
+     */
+    public String[] LerMensagem(DatagramPacket pacoteRecebido){
+
+        String sentenca = (new String(pacoteRecebido.getData()));
+        String[] s = new String[1];
+        s = sentenca.split("|");
+        return s;
+
+    }
+
+    /**
+     * Método para saber se a mensagem que está chegando,
+     * é uma requisição de cadastro, se sim, adiciona na lista e a retorna.
+     * @param String[] palavraDeControle
+     *
+     */
+    public void verificarMensagemCadastro(String[] palavraDeControle, DatagramPacket pacoteRecebido){
+
+        if(palavraDeControle[0].equalsIgnoreCase("Login")){
+            addNaLista(palavraDeControle[1], pacoteRecebido.getAddress(), pacoteRecebido.getPort());
+            retornaLista(pacoteRecebido, palavraDeControle[1]);
+        }
+    }
+
+    /**
+     * Método para verificar se somente é uma requisição de atualização de lista.
+     * @param palavraDeControle
+     * @param pacoteRecebido
+     */
+    public void verificarMensagemLista(String[] palavraDeControle, DatagramPacket pacoteRecebido){
+
+        if(palavraDeControle[0].equalsIgnoreCase("Lista"))
+            retornaLista(pacoteRecebido, palavraDeControle[1]);       
+    }
 }
+
 
     
 
