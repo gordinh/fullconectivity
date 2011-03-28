@@ -7,7 +7,7 @@ package controle;
 import java.util.Observable;
 import java.util.Observer;
 import modelo.Matriz;
-import visual.JanelaPrincipal;
+import visual.JanelaJogo;
 
 /**
  *
@@ -15,13 +15,13 @@ import visual.JanelaPrincipal;
  */
 public class ControlaJanelaJogo implements Observer {
 
-    JanelaPrincipal janela;
-    Matriz mat;
-    int round = 0;
+    private JanelaJogo janela;
+    private Matriz mat;
+    private int round = 0;
 
     public ControlaJanelaJogo() {
 
-        janela = new JanelaPrincipal();
+        janela = new JanelaJogo();
         janela.addObserver(this);
         janela.setText("Player 1 jogando...");
 
@@ -63,4 +63,29 @@ public class ControlaJanelaJogo implements Observer {
 
             }
     }
+
+    public JanelaJogo getJanela() {
+        return janela;
+    }
+
+    public void setJanela(JanelaJogo janela) {
+        this.janela = janela;
+    }
+
+    public Matriz getMat() {
+        return mat;
+    }
+
+    public void setMat(Matriz mat) {
+        this.mat = mat;
+    }
+
+    public int getRound() {
+        return round;
+    }
+
+    public void setRound(int round) {
+        this.round = round;
+    }
+
 }
