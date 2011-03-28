@@ -31,10 +31,10 @@ public class SalaDeEspera2 {
         clientes = new ArrayList<Cliente>();
         clientes = conectados;
         MontarListaDeConectados();
-        mostraJanela(/*ctrlCli*/);
+        mostraJanela(ctrl);
     }
 
-    public void mostraJanela(){
+    public void mostraJanela(ControlaSalaDeEspera ctrl){
        
        frame = new JFrame("Jogo da Velha --Sala de Espera");
        panel = new JPanel();     
@@ -70,8 +70,10 @@ public class SalaDeEspera2 {
        logo.setBounds( -2, -10, 400, 330);
 
        convidar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/visual/cabo3.png")));
-       convidar.setBounds(220, 305, 97, 72);
+       convidar.setBounds(220, 280, 110, 90);
        convidar.setToolTipText("Clique para convidar");
+
+       convidar.addActionListener(ctrl);
 
        info.setBounds(80, 300, 200, 70);
        
@@ -94,6 +96,15 @@ public class SalaDeEspera2 {
     public void visible(boolean b){
 
         frame.setVisible(b);
+    }
+
+    /**
+     * Esse método retorna o botão de convite a fim de verificar a validade do
+     * evento disparado na sala de espera.
+     */
+    public JButton getConvidar(){
+
+        return convidar;
     }
 
 
