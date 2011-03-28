@@ -20,8 +20,8 @@ import visual.JanelaLogin;
 
 /**
  *
- * Essa classe deve gerenciar todas as ações do jogador. sua função é gerir o fluxo
- * das ações do jogador.
+ * Essa classe deve gerenciar todas as ações do jogador. gerindo o fluxo
+ * dos dados entre doig jogadores e entre o servidor.
  *
  * @author andre
  */
@@ -46,6 +46,10 @@ public class ControlaCliente implements ActionListener, Runnable{
 
         jLogin = new JanelaLogin(this);
 
+    }
+
+    public void run() {
+        verificarDesafio();
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -169,9 +173,9 @@ public class ControlaCliente implements ActionListener, Runnable{
      */
     public void verificarDesafio(){
 
-        boolean saiWhile = true;
+        boolean saiWhile = false;
 
-        while(saiWhile){
+        while(!saiWhile){
 
             DatagramPacket desafio = new DatagramPacket(new byte[1024], 1024);
 
@@ -184,35 +188,50 @@ public class ControlaCliente implements ActionListener, Runnable{
 
             String[] t = s.split("|");
             if (t[0].equalsIgnoreCase("Desafio")){
+
                 String mensagem = "Você recebeu um convite de jogo de " + t[1] + "\n" + "Aceitar?";
                 int i = JOptionPane.showConfirmDialog(null, mensagem, "Cofirmação de Desafio", 1);
+
                 if (i == 0){
-                    saiWhile = false;
+
+                    saiWhile = true;
                     byte[] b = new byte[1024];
                     b = "Aceito".getBytes();
                     DatagramPacket pacoteEnvio = new DatagramPacket(b, b.length, desafio.getAddress(), desafio.getPort());
+
                     try {
                         clienteSocket.send(pacoteEnvio);
                     } catch (IOException ex) {
                         Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     break;
+
                 } else {
+
                     byte[] b = new byte[1024];
                     b = "Negado".getBytes();
                     DatagramPacket pacoteEnvio = new DatagramPacket(b, b.length, desafio.getAddress(), desafio.getPort());
+
                     try {
                         clienteSocket.send(pacoteEnvio);
                     } catch (IOException ex) {
                         Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    
                 }
             }
         }        
     }
 
-    public void Desafiar(){
-        
+    public void Desafiar(InetAddress ia, int porta){
+
+        DatagramPacket dp = new DatagramPacket(new byte[1024], 1024, ia, porta);
+        try {
+            clienteSocket.send(dp);
+        } catch (IOException ex) {
+            Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        verificarDesafio();
     }
 
     public DatagramSocket getClienteSocket() {
@@ -253,10 +272,6 @@ public class ControlaCliente implements ActionListener, Runnable{
 
     public void setNick(String nick) {
         this.nick = nick;
-    }
-
-    public void run() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    }    
 
 }
