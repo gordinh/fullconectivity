@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import modelo.Cliente;
-import visual.SalaDeEspera2;
+import visual.SalaDeEspera;
 
 /**
  *
@@ -18,11 +18,11 @@ import visual.SalaDeEspera2;
  */
 public class ControlaSalaDeEspera implements ActionListener {
 
-    private SalaDeEspera2 salaDeEspera;
+    private SalaDeEspera salaDeEspera;
 
     public ControlaSalaDeEspera(ArrayList<Cliente> array){
         
-        salaDeEspera = new SalaDeEspera2(this, array);
+        salaDeEspera = new SalaDeEspera(this, array);
 
     }
 
@@ -46,11 +46,11 @@ public class ControlaSalaDeEspera implements ActionListener {
 
     }
 
-    public SalaDeEspera2 getSalaDeEspera() {
+    public SalaDeEspera getSalaDeEspera() {
         return salaDeEspera;
     }
 
-    public void setSalaDeEspera(SalaDeEspera2 salaDeEspera) {
+    public void setSalaDeEspera(SalaDeEspera salaDeEspera) {
         this.salaDeEspera = salaDeEspera;
     }
     

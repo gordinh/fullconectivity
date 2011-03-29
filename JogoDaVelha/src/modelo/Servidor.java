@@ -72,9 +72,9 @@ public class Servidor implements Runnable{
     public byte[] MontarStringClientes(String nick){
 
         String s = new String();
-        // A String no caso vai conter os seguintes dados:
-        //Nick|Ip|Porta e uma virgula para separara usuarios
-        //diferentes. Ex.: André|10.65.99.33|5000, Douglas|10.65.128.75|2495, etc...
+        // A String enviada conterá os os seguintes dados:
+        // Nick|Ip|Porta e uma virgula para separara usuarios
+        // diferentes. Ex.: João|10.65.99.33|5000, Douglas|10.65.128.75|2495, etc...
         
         for(int i = 0;i < clientes.size(); i++){
             if(!clientes.get(i).getNick().equalsIgnoreCase(nick))
@@ -86,13 +86,13 @@ public class Servidor implements Runnable{
     /**
      *
      * Método para enviar a lista de pessoas conectadas
-     * para alguma cliente que requisite
+     * para alguma cliente que requisite ou quando é cadastrado nessa lista
      * @param dp
      * @param nick
      */
     public void retornaLista(DatagramPacket dp, String nick){
 
-            //Depois de adicionar na lista, responde com o retorno da lista atualizada           
+                       
             byte[] sendData = new byte[MontarStringClientes(nick).length];
             sendData = MontarStringClientes(nick);
             InetAddress endIP = dp.getAddress();
@@ -110,7 +110,7 @@ public class Servidor implements Runnable{
 
     /**
      * Método para recebimento da mensagem
-     * @return PacoteRecebido
+     * @return DatagramPacket PacoteRecebido
      */
     public DatagramPacket receberMensagem(){
 
@@ -160,11 +160,13 @@ public class Servidor implements Runnable{
                         estado = 2;
                     }
                     break;
+
                 case 1:
                     addNaLista(s[1], dp.getAddress(), dp.getPort());
                     retornaLista(dp, s[1]);
                     estado = 0;
                     break;
+                    
                 case 2:
                     retornaLista(dp, s[1]);
                     estado = 0;

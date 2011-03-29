@@ -16,7 +16,7 @@ import modelo.Cliente;
  *
  * @author douglas
  */
-public class SalaDeEspera2 {
+public class SalaDeEspera {
 
     JFrame frame;
     JPanel panel;
@@ -27,7 +27,7 @@ public class SalaDeEspera2 {
     JLabel logo, info;
     JButton convidar;
 
-    public SalaDeEspera2(ControlaSalaDeEspera ctrl, ArrayList conectados){
+    public SalaDeEspera(ControlaSalaDeEspera ctrl, ArrayList conectados){
         clientes = new ArrayList<Cliente>();
         clientes = conectados;
         MontarListaDeConectados();
