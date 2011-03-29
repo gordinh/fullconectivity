@@ -2,9 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package controle;
-
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,8 +15,6 @@ import javax.swing.JOptionPane;
 import modelo.Cliente;
 import visual.JanelaLogin;
 
-
-
 /**
  *
  * Essa classe deve gerenciar todas as ações do jogador. gerindo o fluxo
@@ -26,64 +22,110 @@ import visual.JanelaLogin;
  *
  * @author andre
  */
-public class ControlaCliente implements ActionListener, Runnable{
+public class ControlaCliente implements ActionListener, Runnable {
 
-   JanelaLogin jLogin;
-   private DatagramSocket socket;
-   private String nick;
-   private ArrayList<Cliente> clientes;
-   private boolean emJogo;   
-   private ControlaSalaDeEspera controlaSalaDeEspera;
-   private ControlaJanelaJogo controlaJanelaJogo;
-   private Cliente oponente;
+    JanelaLogin jLogin;
+    private DatagramSocket socket;
+    private String nick;
+    private ArrayList<Cliente> clientes;
+    private boolean emJogo;
+    private ControlaSalaDeEspera controlaSalaDeEspera;
+    private ControlaJanelaJogo controlaJanelaJogo;
+    private Cliente oponente;
 
-    public ControlaCliente(){
-        
+    public ControlaCliente() {
+
         clientes = new ArrayList<Cliente>();
         emJogo = false;
         oponente = null;
         login();
     }
 
-    public void login(){
+    public void login() {
 
         jLogin = new JanelaLogin(this);
 
     }
 
+    public void inicio(){
+        DatagramPacket desafio = new DatagramPacket(new byte[1024], 1024);
+
+        while (true) {
+
+            try {
+                socket.receive(desafio);
+            } catch (IOException ex) {
+                Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            String s = new String(desafio.getData());
+
+            String[] t = s.split("|");
+
+        }
+    }
+
     public void run() {
-        verificarDesafio();
+
+        DatagramPacket desafio = new DatagramPacket(new byte[1024], 1024);
+        int estado = 0;
+
+        switch(estado){
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+
+        }
+
+        while (true) {
+
+            try {
+                socket.receive(desafio);
+            } catch (IOException ex) {
+                Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            String s = new String(desafio.getData());
+
+            String[] t = s.split("|");
+
+
+
+        }
     }
 
     public void actionPerformed(ActionEvent e) {
-        
+
         nick = jLogin.getNick().getText();
 
-        if(e.getSource() == jLogin.getEnter()){
+        if (e.getSource() == jLogin.getEnter()) {
 
-            if(!nick.equalsIgnoreCase("") && nick.length() <= 8 ){                
-                
+            if (!nick.equalsIgnoreCase("") && nick.length() <= 8) {
+
                 jLogin.Visible(false);
                 conectaServidor();
-                
-            } else{
 
-                JOptionPane.showMessageDialog(null, "Seu nick deve conter de 1 a 8 caracteres", "Login Inválido", 0);                
+            } else {
+
+                JOptionPane.showMessageDialog(null, "Seu nick deve conter de 1 a 8 caracteres", "Login Inválido", 0);
             }
-        }     
+        }
     }
 
     /**
      * Metodo que fará a conexão do usuário com o servidor
      * 
      */
-    public void conectaServidor(){
+    public void conectaServidor() {
 
         montarPacote();
         cadastrarNaLista();
         receberLista();
-        verificarDesafio();
-        //EntrarNoJogo();
+        //verificarDesafio();
+        //entrarNoJogo();
 
     }
 
@@ -91,8 +133,8 @@ public class ControlaCliente implements ActionListener, Runnable{
      * Método para montagem do pacote a ser enviado ao servidor, requisitando
      * para ser adicionado na lista
      */
-    public void montarPacote(){
-        
+    public void montarPacote() {
+
         InetAddress serverip = null;
         try {
 
@@ -104,15 +146,13 @@ public class ControlaCliente implements ActionListener, Runnable{
 
             // System.out.println(serverip.toString());
 
-            System.out.println("Conectando \"" +  nick + "\" ao server...");
+            System.out.println("Conectando \"" + nick + "\" ao server...");
 
         } catch (UnknownHostException ex) {
             JOptionPane.showMessageDialog(null, "Não foi possível encontrar o servidor", "Server Não Localizado", 0);
-        }
-        catch (SocketException se){
+        } catch (SocketException se) {
             JOptionPane.showMessageDialog(null, "Verificar criação do Socket", "Erro no Socket", 0);
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
     }
@@ -120,22 +160,22 @@ public class ControlaCliente implements ActionListener, Runnable{
     /**
      * Método encarregado de enviar a requisição para entrar na lista
      */
-    public void cadastrarNaLista(){
-        
+    public void cadastrarNaLista() {
+
         String pacote = "Login" + "|" + nick;
 
         byte[] b = new byte[pacote.getBytes().length];
         b = pacote.getBytes();
-        
+
         try {
             DatagramPacket packet = new DatagramPacket(b, b.length, InetAddress.getLocalHost(), 5000);
             socket.send(packet);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Erro no Envio da requisição da lista", "Erro na Requisição", 0);
-        }        
+        }
     }
 
-    public void requisitarLista(){
+    public void requisitarLista() {
 
         String pacote = "Lista" + "|" + nick;
 
@@ -150,9 +190,9 @@ public class ControlaCliente implements ActionListener, Runnable{
         }
     }
 
-    public void receberLista(){
+    public void receberLista() {
 
-        if(!clientes.isEmpty()){ // No caso do usuário ja possuir uma lista, a zera e refaz toda.
+        if (!clientes.isEmpty()) { // No caso do usuário ja possuir uma lista, a zera e refaz toda.
             clientes.clear();
         }
 
@@ -169,7 +209,7 @@ public class ControlaCliente implements ActionListener, Runnable{
 
         String[] t = s.split(","); // O tamanho desse vetor vai ser igual a quantidade de pessoas conectadas ao servidor
 
-        for(int i = 0; i < t.length; i++){
+        for (int i = 0; i < t.length; i++) {
             String[] u = t[i].split("|");
             Cliente c = new Cliente(u[0], u[1], Integer.parseInt(u[2])); // Na ordem: u[0] = Nick, u[1] = ip e u[2] = porta
             clientes.add(c);
@@ -180,63 +220,53 @@ public class ControlaCliente implements ActionListener, Runnable{
     }
 
     /**
-     *
-     * Método utilizado para aguardar convite de outros jogadores
+     * Esse método faz o tratamento dos convites que chegam para o usuário do aplicativo.
+     * Detectado que chegou uma mensagem de convite, o aplicativo pergunta ao usuário deseja aceitar
+     * e a seguir, devolve a reposta para quem o convidou.
      */
-    public void verificarDesafio(){
+    public void verificarDesafio(String nickOpp, DatagramPacket packet) {
 
-        boolean saiWhile = false;
 
-        while(!saiWhile){
+        DatagramPacket desafio = new DatagramPacket(new byte[1024], 1024);
 
-            DatagramPacket desafio = new DatagramPacket(new byte[1024], 1024);
+        desafio = packet;
+
+
+
+        String mensagem = "Você recebeu um convite de jogo de " + nickOpp + "\n" + "Aceitar?";
+        int i = JOptionPane.showConfirmDialog(null, mensagem, "Cofirmação de Desafio", 1);
+
+        if (i == 0) {
+
+            byte[] b = new byte[1024];
+            b = "Aceito".getBytes();
+            DatagramPacket pacoteEnvio = new DatagramPacket(b, b.length, desafio.getAddress(), desafio.getPort());
 
             try {
-                socket.receive(desafio);
+                socket.send(pacoteEnvio);
             } catch (IOException ex) {
                 Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
             }
-            String s = new String(desafio.getData());
+            //EntrarNoJogo(t[1], desafio);
 
-            String[] t = s.split("|");
-            if (t[0].equalsIgnoreCase("Desafio")){
+        } else {
 
-                String mensagem = "Você recebeu um convite de jogo de " + t[1] + "\n" + "Aceitar?";
-                int i = JOptionPane.showConfirmDialog(null, mensagem, "Cofirmação de Desafio", 1);
+            byte[] b = new byte[1024];
+            b = "Negado".getBytes();
+            DatagramPacket pacoteEnvio = new DatagramPacket(b, b.length, desafio.getAddress(), desafio.getPort());
 
-                if (i == 0){
-
-                    saiWhile = true;
-                    byte[] b = new byte[1024];
-                    b = "Aceito".getBytes();
-                    DatagramPacket pacoteEnvio = new DatagramPacket(b, b.length, desafio.getAddress(), desafio.getPort());
-
-                    try {
-                        socket.send(pacoteEnvio);
-                    } catch (IOException ex) {
-                        Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    EntrarNoJogo(t[1], desafio);
-                    break;
-
-                } else {
-
-                    byte[] b = new byte[1024];
-                    b = "Negado".getBytes();
-                    DatagramPacket pacoteEnvio = new DatagramPacket(b, b.length, desafio.getAddress(), desafio.getPort());
-
-                    try {
-                        socket.send(pacoteEnvio);
-                    } catch (IOException ex) {
-                        Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    
-                }
+            try {
+                socket.send(pacoteEnvio);
+            } catch (IOException ex) {
+                Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }        
+
+        }
+
+
     }
 
-    public void Desafiar(InetAddress ia, int porta){
+    public void Desafiar(InetAddress ia, int porta) {
 
         DatagramPacket dp = new DatagramPacket(new byte[1024], 1024, ia, porta);
         try {
@@ -244,23 +274,22 @@ public class ControlaCliente implements ActionListener, Runnable{
         } catch (IOException ex) {
             Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
-        verificarDesafio();
+        //verificarDesafio();
     }
 
-    public void EntrarNoJogo(String nick, DatagramPacket desafio){
+    public void entrarNoJogo(String nick, DatagramPacket desafio) {
 
         //Algoritmo de quem convidou
-        try {            
+        try {
             socket.receive(desafio);
         } catch (IOException ex) {
             Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
         String[] sentenca = LerMensagem(desafio);
-        if(sentenca[0].equals("Aceito")){
+        if (sentenca[0].equals("Aceito")) {
             oponente = new Cliente(sentenca[1], desafio.getAddress().getHostAddress(), desafio.getPort());
             controlaJanelaJogo = new ControlaJanelaJogo();
-        } else if(sentenca[0].equals("Negado")){
-               
+        } else if (sentenca[0].equals("Negado")) {
         }
 
         //Algoritmo de quem foi convidado
@@ -276,13 +305,38 @@ public class ControlaCliente implements ActionListener, Runnable{
      * @param DatagramPacket PacoteRecebido
      * @return s
      */
-    public String[] LerMensagem(DatagramPacket pacoteRecebido){
+    public String[] LerMensagem(DatagramPacket pacoteRecebido) {
 
         String sentenca = (new String(pacoteRecebido.getData()));
         String[] s = new String[1];
         s = sentenca.split("|");
         return s;
 
+    }
+
+    public void escalonadorDePacotes(DatagramPacket packet) {
+    }
+
+    /**
+     * Este método codificará as palavras-chaves da aplicação com a finalidade de usar tais números
+     * no case do metodo
+     * @param mensagem
+     * @return
+     */
+    public int codificaMensagem(String mensagem) {
+
+        // 1. Desafio // 2. Lista // 3. Jogada       
+
+        if (mensagem.equalsIgnoreCase("Login")) {
+            return 1;
+        } else if (mensagem.equalsIgnoreCase("Lista")) {
+            return 2;
+        } else if (mensagem.equalsIgnoreCase("Jogada")) {
+            return 3;
+        }
+        
+        //Retorna zero no caso de erro
+        return 0;
     }
 
     public DatagramSocket getClienteSocket() {
@@ -323,6 +377,5 @@ public class ControlaCliente implements ActionListener, Runnable{
 
     public void setNick(String nick) {
         this.nick = nick;
-    }    
-
+    }
 }

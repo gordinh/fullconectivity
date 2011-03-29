@@ -5,9 +5,6 @@
 
 package controle;
 
-import java.util.ArrayList;
-import modelo.Cliente;
-
 /**
  *
  * @author andre
@@ -15,7 +12,7 @@ import modelo.Cliente;
 public class StartClient{
 
     public static void main(String[] args) {
-        ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+      /*  ArrayList<Cliente> clientes = new ArrayList<Cliente>();
 
        Cliente um = new Cliente("um", "192.168.0.0", 2020);
        Cliente dois = new Cliente("dois", "192.168.0.1", 2020);
@@ -41,11 +38,13 @@ public class StartClient{
        
         ControlaSalaDeEspera controlaSala = new ControlaSalaDeEspera(clientes);
              
-        System.out.println(controlaSala.getSalaDeEspera().lista.getSelectedValue());
+        System.out.println(controlaSala.getSalaDeEspera().lista.getSelectedValue*/
         
-       /* ControlaCliente controla = new ControlaCliente();
+        ControlaCliente controla = new ControlaCliente();
         Thread t = new Thread(controla);
-        t.start(); */
+        t.start(); 
+
+        
 
     }
 }

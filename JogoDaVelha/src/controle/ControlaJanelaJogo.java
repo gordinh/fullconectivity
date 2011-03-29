@@ -64,6 +64,7 @@ public class ControlaJanelaJogo implements Observer {
             }
     }
 
+
     public JanelaJogo getJanela() {
         return janela;
     }
