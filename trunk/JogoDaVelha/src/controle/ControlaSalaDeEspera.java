@@ -18,7 +18,7 @@ import visual.SalaDeEspera2;
  */
 public class ControlaSalaDeEspera implements ActionListener {
 
-    /*private*/ public SalaDeEspera2 salaDeEspera;
+    private SalaDeEspera2 salaDeEspera;
 
     public ControlaSalaDeEspera(ArrayList<Cliente> array){
         
@@ -46,7 +46,13 @@ public class ControlaSalaDeEspera implements ActionListener {
 
     }
 
-    
+    public SalaDeEspera2 getSalaDeEspera() {
+        return salaDeEspera;
+    }
+
+    public void setSalaDeEspera(SalaDeEspera2 salaDeEspera) {
+        this.salaDeEspera = salaDeEspera;
+    }
     
 
 }
