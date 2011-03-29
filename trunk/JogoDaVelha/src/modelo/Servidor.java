@@ -107,41 +107,70 @@ public class Servidor implements Runnable{
             }
     }
 
-    /**
-     *
-     * Método de inicialização da rotina de recepção de dados do servidor
-     *
-     */
-    public void run() {       
 
-        byte[] receiveData = new byte[1024];        
+    /**
+     * Método para recebimento da mensagem
+     * @return PacoteRecebido
+     */
+    public DatagramPacket receberMensagem(){
+
+        byte[] receiveData = new byte[1024];
 
         try {
-
+            
             serverSocket = new DatagramSocket(2495);
 
         } catch (SocketException ex) {
             System.out.println(ex.getMessage());
         }
-        
-        while (true) {
-            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+
+        DatagramPacket receivePacket = new DatagramPacket(receiveData,
+                receiveData.length);
 
             try {
                 serverSocket.receive(receivePacket);
             } catch (IOException ex) {
                 System.out.println(ex.getMessage());
             }
-            
-            //System.out.println(sentencaMod);
 
-            String[] s = new String[1];
-            s = LerMensagem(receivePacket);
+        return receivePacket;
+    }    
+    
+    /**
+     *
+     * Método de inicialização da rotina de recepção de dados do servidor
+     *
+     */
+    public void run() {
 
-            verificarMensagemCadastro(s, receivePacket);
+        int estado = 0;
+        String[] s = new String[1];
+        DatagramPacket dp = null;
 
-            verificarMensagemLista(s, receivePacket);            
-      }
+        while(true){
+
+            switch(estado){
+
+                case 0:
+                    dp = receberMensagem();
+                    s = LerMensagem(dp);
+                    if(s[0].equals("Login")){
+                        estado = 1;
+                    } else if(s[0].equals("Lista")){
+                        estado = 2;
+                    }
+                    break;
+                case 1:
+                    addNaLista(s[1], dp.getAddress(), dp.getPort());
+                    retornaLista(dp, s[1]);
+                    estado = 0;
+                    break;
+                case 2:
+                    retornaLista(dp, s[1]);
+                    estado = 0;
+                    break;
+            }
+        }
    }
 
     /**
@@ -156,34 +185,5 @@ public class Servidor implements Runnable{
         s = sentenca.split("|");
         return s;
 
-    }
-
-    /**
-     * Método para saber se a mensagem que está chegando,
-     * é uma requisição de cadastro, se sim, adiciona na lista e a retorna.
-     * @param String[] palavraDeControle
-     *
-     */
-    public void verificarMensagemCadastro(String[] palavraDeControle, DatagramPacket pacoteRecebido){
-
-        if(palavraDeControle[0].equalsIgnoreCase("Login")){
-            addNaLista(palavraDeControle[1], pacoteRecebido.getAddress(), pacoteRecebido.getPort());
-            retornaLista(pacoteRecebido, palavraDeControle[1]);
-        }
-    }
-
-    /**
-     * Método para verificar se somente é uma requisição de atualização de lista.
-     * @param palavraDeControle
-     * @param pacoteRecebido
-     */
-    public void verificarMensagemLista(String[] palavraDeControle, DatagramPacket pacoteRecebido){
-
-        if(palavraDeControle[0].equalsIgnoreCase("Lista"))
-            retornaLista(pacoteRecebido, palavraDeControle[1]);       
-    }
-}
-
-
-    
-
+    }    
+}  
