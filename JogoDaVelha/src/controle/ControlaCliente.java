@@ -174,7 +174,7 @@ public class ControlaCliente implements ActionListener, Runnable{
             Cliente c = new Cliente(u[0], u[1], Integer.parseInt(u[2])); // Na ordem: u[0] = Nick, u[1] = ip e u[2] = porta
             clientes.add(c);
         }
-        
+        //Devolver o cliente selecionado ou receber o desafio
         controlaSalaDeEspera = new ControlaSalaDeEspera(clientes);
 
     }
@@ -259,6 +259,8 @@ public class ControlaCliente implements ActionListener, Runnable{
         if(sentenca[0].equals("Aceito")){
             oponente = new Cliente(sentenca[1], desafio.getAddress().getHostAddress(), desafio.getPort());
             controlaJanelaJogo = new ControlaJanelaJogo();
+        } else if(sentenca[0].equals("Negado")){
+               
         }
 
         //Algoritmo de quem foi convidado

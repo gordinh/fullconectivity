@@ -41,7 +41,7 @@ public class StartClient{
        
         ControlaSalaDeEspera controlaSala = new ControlaSalaDeEspera(clientes);
              
-        System.out.println(controlaSala.salaDeEspera.lista.getSelectedValue());
+        System.out.println(controlaSala.getSalaDeEspera().lista.getSelectedValue());
         
        /* ControlaCliente controla = new ControlaCliente();
         Thread t = new Thread(controla);
