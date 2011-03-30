@@ -10,8 +10,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import modelo.Cliente;
+import modelo.ComunicadorUDP;
 import visual.JanelaLogin;
-import visual.SalaDeEspera;
+
 
 /**
  *
@@ -20,7 +21,7 @@ import visual.SalaDeEspera;
  *
  * @author andre
  */
-public class ControlaJogador implements ActionListener, Runnable {
+public class ControlaJogador extends ComunicadorUDP implements ActionListener, Runnable {
 
     JanelaLogin jLogin;
     private DatagramSocket socket;
@@ -149,7 +150,7 @@ public class ControlaJogador implements ActionListener, Runnable {
 
                 case 0:
 
-                    estado = recebePacoteUDP();
+                    estado = super.recebePacoteUDP();
                     break;
 
                 case 1: { // 1. Desafio
@@ -297,7 +298,7 @@ public class ControlaJogador implements ActionListener, Runnable {
 
                 oponente = new Cliente("", desafio.getAddress().getHostAddress(), desafio.getPort());
                 emJogo = true;
-                controlaJanelaJogo = new ControlaJanelaJogo();
+                controlaJanelaJogo = new ControlaJanelaJogo(oponente);
                 controlaSalaDeEspera.setConvidou(false);
                 estado = 1;
                 }
@@ -306,7 +307,7 @@ public class ControlaJogador implements ActionListener, Runnable {
                 //Algoritmo de quem foi convidado
 
                 emJogo = true;
-                controlaJanelaJogo = new ControlaJanelaJogo();
+                controlaJanelaJogo = new ControlaJanelaJogo(oponente);
                 oponente = new Cliente(nick, desafio.getAddress().getHostAddress(), desafio.getPort());
                 controlaJanelaJogo.getJanela().setEditFrame(false);
                 estado = 2;
@@ -316,107 +317,42 @@ public class ControlaJogador implements ActionListener, Runnable {
             case 1: //Estado do jogador 1, ou seja, a interface espera a jogada.
                 // Detectar botao pressionado e mandar coordenadas para o outro jogador
 
+                boolean sai = true;
+
+                while(sai)
+                {
+                    if(controlaJanelaJogo.isFimRodada())
+                        sai = false;
+                }
                 estado = 2;
+                controlaJanelaJogo.setFimRodada(false);
                 break;
 
             case 2: // Estado do jogador 2, ou seja, aguardando jogada do oponente.
+
+                DatagramPacket temp = recebePacoteUDPJogo();
+
+                String [] msg = lerMensagem(temp);
+
+                if(msg[0].trim().equalsIgnoreCase("#")){
+
+                    controlaJanelaJogo.refresh(msg[1]);
+                }
+
+
                 estado = 1;
                 break;
         }
-    }
+    }    
 
-    /**
-     * Método para receber a mensagem e quebrar com o split.
-     * @param DatagramPacket PacoteRecebido
-     * @return s
-     */
-    public String[] lerMensagem(DatagramPacket pacoteRecebido) {
-
-        String sentenca = (new String(pacoteRecebido.getData()));
-        String[] s = new String[1];
-        s = sentenca.split("|");
-        return s;
-
-    }
-
-    /**
-     * Este método codificará as palavras-chaves da aplicação com a finalidade de usar este
-     * retorno no case do metodo run().
-     * @param mensagem
-     * @return
-     */
-    public int codificaPalavraChave(String mensagem) {
-
-        // 1. Desafio // 2. Lista // 3. Jogada
-
-        //  4. Aceito // 5. Negado //
-
-        if (mensagem.equalsIgnoreCase("Login")) {
-            return 1;
-        } else if (mensagem.equalsIgnoreCase("Lista")) {
-            return 2;
-        } else if (mensagem.equalsIgnoreCase("Jogada")) {
-            return 3;
-        } else if (mensagem.equalsIgnoreCase("Aceito")) {
-            return 4;
-        } else if (mensagem.equals("Negado")){
-            return 5;
-        }
-
-        //Retorna zero no caso de erro
-        return 0;
-    }
-
-    /**
-     * Método criado para consdensar num único local a função de enviar o um pacote UDP.
-     * Apenas as informações essenciais (mensagem, ip e porta) são requeridos.
-     *
-     * @param mensagem
-     * @param ip
-     * @param porta
-     */
-    public int enviaPacoteUDP(String mensagem, InetAddress ip, int porta) {
-
-        int count = 0;
-        byte[] dadosDeRecepcao = new byte[1024];
-        byte[] dadosDeEnvio = new byte[1024];
-
-        dadosDeRecepcao = mensagem.getBytes();
-
-        DatagramPacket pacoteEnvio = new DatagramPacket(dadosDeRecepcao, dadosDeRecepcao.length, ip, porta);
-        DatagramPacket pacoteRecepcao = new DatagramPacket(dadosDeEnvio, dadosDeEnvio.length);
-        do{            
-            try {
-            socket.send(pacoteEnvio);
-            Thread.sleep(800);
-            socket.receive(pacoteRecepcao);
-
-            } catch (IOException ex) {
-            Logger.getLogger(ControlaJogador.class.getName()).log(Level.SEVERE, null, ex);
-            } catch(InterruptedException ex){
-                System.out.println(ex.getMessage());
-            }
-
-            String s = (new String(pacoteRecepcao.getData()));
-            s = s.trim();
-            String[] t = lerMensagem(pacoteRecepcao);
-
-            if(pacoteRecepcao.equals(pacoteEnvio)){
-                //Atualizar tabuleiro do jogo //Iniciar jogo //
-                return codificaPalavraChave(t[0]);
-                
-            }
-        }while(count != 6);
-
-        return 10;
-    }
 
     /**
      * Método para recepção do pacote UDP que estiver vindo, e saber o que fazer depois, setando
      * a váriavel de estado corresponde ao código da instrução.
      * @return
-     */
-    public int recebePacoteUDP() {
+     */    
+    
+    public DatagramPacket recebePacoteUDPJogo() {
 
         
         byte[] dadosDeRecepcao = new byte[1024];
@@ -445,7 +381,7 @@ public class ControlaJogador implements ActionListener, Runnable {
 
             }
 
-        return codificaPalavraChave(t[0]);
+        return pacoteRecepcao;
     }
 
     public Cliente procurarCliente(String nick){
