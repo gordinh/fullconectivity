@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import modelo.Cliente;
 import visual.JanelaLogin;
+import visual.SalaDeEspera;
 
 /**
  *
@@ -29,6 +30,7 @@ public class ControlaJogador implements ActionListener, Runnable {
     private ControlaSalaDeEspera controlaSalaDeEspera;
     private ControlaJanelaJogo controlaJanelaJogo;
     private Cliente oponente;
+    private boolean convidei;
 
     public ControlaJogador() {
 
@@ -93,7 +95,7 @@ public class ControlaJogador implements ActionListener, Runnable {
         try {
 
             // Pôr nome do servidor
-            serverip = InetAddress.getByName("linux-wo7e");
+            serverip = InetAddress.getByName("douglas-desktop"/*nome da máquina*/);
 
             // Setando o socket para mandar mensagem para o servidor.
             socket = new DatagramSocket(5000, serverip);
@@ -131,53 +133,67 @@ public class ControlaJogador implements ActionListener, Runnable {
      */
     public void run() {
 
-        DatagramPacket desafio = new DatagramPacket(new byte[1024], 1024);
-        int code;
-
+        DatagramPacket pacote = new DatagramPacket(new byte[1024], 1024);
+        int estado = 0;
+        String[] t = null;
 
         while (true) {
+            
+            //t = lerMensagem(pacote);
 
-            try {
-                socket.receive(desafio);
-            } catch (IOException ex) {
-                Logger.getLogger(ControlaJogador.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            //estado = codificaPalavraChave(t[0]);
+            if(controlaSalaDeEspera.isConvidou())
+                estado = 6;
 
-            String s = new String(desafio.getData());
+            switch (estado) { // Escalonador de Pacotes
 
-            String[] t = s.split("|");
+                case 0:
 
-            code = codificaPalavraChave(t[0]);
-
-            switch (code) { // Escalonador de Pacotes
+                    estado = recebePacoteUDP();
+                    break;
 
                 case 1: { // 1. Desafio
 
-                    verificarDesafio(t[1], desafio);
-                    code = 0;
+                    verificarDesafio(t[1], pacote);
+                    estado = 0;
                     break;
                 }
                 case 2: { // 2. Lista
 
-                    receberListaDeConectados(desafio);
-                    code = 0;
+                    receberListaDeConectados(pacote);
+                    estado = 0;
                     break;
                 }
-                case 3: { // 3. Jogada
+                case 3: { // 3. Começar Jogo
+                    
+                    break;
                 }
                 case 4: { // 4. Aceito
 
                     JOptionPane.showMessageDialog(null, " Você é o player 1 ", "Convite Aceito", 3);
-                    entrarNoJogo(nick, desafio); // NICK ERRADO AQUI, TEM QUE SER O NICK DO OPONENTE
+                    convidei = true;
+                    entrarNoJogo(oponente.getNick(), pacote);                    
+                    estado = 0;
+                    break;
 
                 }
                 case 5: { // 5. Negado
 
                     JOptionPane.showMessageDialog(null, " Parece que alguém não quer jogar... ", "Convite Negado", 3);
-
+                    controlaSalaDeEspera.setConvidou(false);
+                    estado = 0;
+                    break;
                 }
 
+                case 6: //6. Desafiar
 
+                    Cliente aux = procurarCliente(controlaSalaDeEspera.getOponenteSelecionado());
+                
+                    try {
+                    estado = desafiar(InetAddress.getByName(aux.getIp()), aux.getPorta());
+                    } catch (UnknownHostException ex) {
+                    Logger.getLogger(ControlaJogador.class.getName()).log(Level.SEVERE, null, ex);
+                    }
             }
 
         }
@@ -234,38 +250,21 @@ public class ControlaJogador implements ActionListener, Runnable {
      */
     public void verificarDesafio(String nickOpp, DatagramPacket packet) {
 
-
-        DatagramPacket desafio = new DatagramPacket(new byte[1024], 1024);
-
-        desafio = packet;
-
-
-
         String mensagem = "Você recebeu um convite de jogo de " + nickOpp + "\n" + "Aceitar?";
         int i = JOptionPane.showConfirmDialog(null, mensagem, "Cofirmação de Desafio", 1);
 
         if (i == 0) {
-            enviaPacoteUDP("Aceito", desafio.getAddress(), desafio.getPort());
+            enviaPacoteUDP("Aceito", packet.getAddress(), packet.getPort());
 
             JOptionPane.showMessageDialog(null, " Você é o player 2 ", "Convite Aceito", 3);
-
+            controlaSalaDeEspera.getSalaDeEspera().visible(false);
+            
             //EntrarNoJogo(t[1], desafio);
 
         } else {
 
-
-            enviaPacoteUDP("Negado", desafio.getAddress(), desafio.getPort());
-
-            /*byte[] b = new byte[1024];
-            b = "Negado".getBytes();
-            DatagramPacket pacoteEnvio = new DatagramPacket(b, b.length, desafio.getAddress(), desafio.getPort());
-
-            try {
-            socket.send(pacoteEnvio);
-            } catch (IOException ex) {
-            Logger.getLogger(ControlaCliente.class.getName()).log(Level.SEVERE, null, ex);
-            }*/
-
+            enviaPacoteUDP("Negado", packet.getAddress(), packet.getPort());
+            
         }
 
 
@@ -278,36 +277,52 @@ public class ControlaJogador implements ActionListener, Runnable {
      * @param ia
      * @param porta
      */
-    public void Desafiar(InetAddress ia, int porta) {
+    public int desafiar(InetAddress ia, int porta) {
 
-        String mensagem = nick + "|" + "Desafio";
+        String mensagem =  "Desafio" + "|" + nick;
 
-        enviaPacoteUDP(mensagem, ia, porta);
-
+        return enviaPacoteUDP(mensagem, ia, porta);
         
     }
 
     public void entrarNoJogo(String nick, DatagramPacket desafio) {
 
-        //Algoritmo de quem convidou
-        try {
-            socket.receive(desafio);
-        } catch (IOException ex) {
-            Logger.getLogger(ControlaJogador.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        String[] sentenca = LerMensagem(desafio);
-        if (sentenca[0].equals("Aceito")) {
-            oponente = new Cliente(sentenca[1], desafio.getAddress().getHostAddress(), desafio.getPort());
-            controlaJanelaJogo = new ControlaJanelaJogo();
-        } else if (sentenca[0].equals("Negado")) {
-        }
+        int estado = 0;
 
-        //Algoritmo de quem foi convidado
-        emJogo = true;
-        controlaJanelaJogo = new ControlaJanelaJogo();
-        oponente = new Cliente(nick, desafio.getAddress().getHostAddress(), desafio.getPort());
-        controlaJanelaJogo.getJanela().setEditFrame(false);
+        switch(estado){
 
+            case 0: // Estado para configuração dos parâmetros iniciais
+                
+                if(convidei){
+
+                oponente = new Cliente("", desafio.getAddress().getHostAddress(), desafio.getPort());
+                emJogo = true;
+                controlaJanelaJogo = new ControlaJanelaJogo();
+                controlaSalaDeEspera.setConvidou(false);
+                estado = 1;
+                }
+                else{
+            
+                //Algoritmo de quem foi convidado
+
+                emJogo = true;
+                controlaJanelaJogo = new ControlaJanelaJogo();
+                oponente = new Cliente(nick, desafio.getAddress().getHostAddress(), desafio.getPort());
+                controlaJanelaJogo.getJanela().setEditFrame(false);
+                estado = 2;
+                }
+                break;
+
+            case 1: //Estado do jogador 1, ou seja, a interface espera a jogada.
+                // Detectar botao pressionado e mandar coordenadas para o outro jogador
+
+                estado = 2;
+                break;
+
+            case 2: // Estado do jogador 2, ou seja, aguardando jogada do oponente.
+                estado = 1;
+                break;
+        }
     }
 
     /**
@@ -315,7 +330,7 @@ public class ControlaJogador implements ActionListener, Runnable {
      * @param DatagramPacket PacoteRecebido
      * @return s
      */
-    public String[] LerMensagem(DatagramPacket pacoteRecebido) {
+    public String[] lerMensagem(DatagramPacket pacoteRecebido) {
 
         String sentenca = (new String(pacoteRecebido.getData()));
         String[] s = new String[1];
@@ -344,6 +359,8 @@ public class ControlaJogador implements ActionListener, Runnable {
             return 3;
         } else if (mensagem.equalsIgnoreCase("Aceito")) {
             return 4;
+        } else if (mensagem.equals("Negado")){
+            return 5;
         }
 
         //Retorna zero no caso de erro
@@ -358,20 +375,86 @@ public class ControlaJogador implements ActionListener, Runnable {
      * @param ip
      * @param porta
      */
-    public void enviaPacoteUDP(String mensagem, InetAddress ip, int porta) {
+    public int enviaPacoteUDP(String mensagem, InetAddress ip, int porta) {
 
+        int count = 0;
+        byte[] dadosDeRecepcao = new byte[1024];
+        byte[] dadosDeEnvio = new byte[1024];
 
-        byte[] b = new byte[1024];
-        b = mensagem.getBytes();
+        dadosDeRecepcao = mensagem.getBytes();
 
-        DatagramPacket pacoteEnvio = new DatagramPacket(b, b.length, ip, porta);
-
-        try {
+        DatagramPacket pacoteEnvio = new DatagramPacket(dadosDeRecepcao, dadosDeRecepcao.length, ip, porta);
+        DatagramPacket pacoteRecepcao = new DatagramPacket(dadosDeEnvio, dadosDeEnvio.length);
+        do{            
+            try {
             socket.send(pacoteEnvio);
-        } catch (IOException ex) {
-            Logger.getLogger(ControlaJogador.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            Thread.sleep(800);
+            socket.receive(pacoteRecepcao);
 
+            } catch (IOException ex) {
+            Logger.getLogger(ControlaJogador.class.getName()).log(Level.SEVERE, null, ex);
+            } catch(InterruptedException ex){
+                System.out.println(ex.getMessage());
+            }
+
+            String s = (new String(pacoteRecepcao.getData()));
+            s = s.trim();
+            String[] t = lerMensagem(pacoteRecepcao);
+
+            if(pacoteRecepcao.equals(pacoteEnvio)){
+                //Atualizar tabuleiro do jogo //Iniciar jogo //
+                return codificaPalavraChave(t[0]);
+                
+            }
+        }while(count != 6);
+
+        return 10;
+    }
+
+    /**
+     * Método para recepção do pacote UDP que estiver vindo, e saber o que fazer depois, setando
+     * a váriavel de estado corresponde ao código da instrução.
+     * @return
+     */
+    public int recebePacoteUDP() {
+
+        
+        byte[] dadosDeRecepcao = new byte[1024];
+        byte[] dadosDeEnvio = new byte[1024];
+        String s = null;
+        String[] t = null;
+
+        DatagramPacket pacoteRecepcao = new DatagramPacket(dadosDeRecepcao, dadosDeRecepcao.length);
+        
+            try {
+                
+            socket.receive(pacoteRecepcao);
+            
+            s = (new String(pacoteRecepcao.getData()));
+            s = s.trim();
+            t = lerMensagem(pacoteRecepcao);
+
+            InetAddress endIP = pacoteRecepcao.getAddress();
+            int porta = pacoteRecepcao.getPort();
+
+            DatagramPacket pacoteEnvio = new DatagramPacket(dadosDeEnvio, dadosDeEnvio.length, endIP, porta);
+            socket.send(pacoteEnvio);
+
+            } catch (IOException ex) {
+            Logger.getLogger(ControlaJogador.class.getName()).log(Level.SEVERE, null, ex);
+
+            }
+
+        return codificaPalavraChave(t[0]);
+    }
+
+    public Cliente procurarCliente(String nick){
+
+        for(int i = 0 ;i < clientes.size(); i++)
+            if(clientes.get(i).getNick().equals(nick))
+                return clientes.get(i);
+
+        return null;
     }
 
     public DatagramSocket getClienteSocket() {
@@ -413,9 +496,18 @@ public class ControlaJogador implements ActionListener, Runnable {
     public void setNick(String nick) {
         this.nick = nick;
     }
+
+    public boolean isConvidei() {
+        return convidei;
+    }
+
+    public void setConvidei(boolean convidei) {
+        this.convidei = convidei;
+    }
+
 }
 
-/* // beckup 
+/* // backup
 
 public void inicio(){
 DatagramPacket desafio = new DatagramPacket(new byte[1024], 1024);
