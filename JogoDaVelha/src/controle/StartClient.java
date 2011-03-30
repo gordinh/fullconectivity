@@ -40,7 +40,7 @@ public class StartClient{
              
         System.out.println(controlaSala.getSalaDeEspera().lista.getSelectedValue*/
         
-        ControlaCliente controla = new ControlaCliente();
+        ControlaJogador controla = new ControlaJogador();
         Thread t = new Thread(controla);
         t.start(); 
 

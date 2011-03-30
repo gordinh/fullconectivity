@@ -10,6 +10,7 @@ import modelo.Matriz;
 import visual.JanelaJogo;
 
 /**
+ * Classe responsável por gerenciar todas interações entre jogador e aplicação.
  *
  * @author andre
  */
@@ -42,7 +43,7 @@ public class ControlaJanelaJogo implements Observer {
             int player = round % 2;
 
             if (player == 0) {
-                janela.setText("Player 1 jogando...");
+                janela.setText("Player 1 jogando...");String aux = "12";
             } else {
                 janela.setText("Player 2 jogando...");
             }
