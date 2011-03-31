@@ -23,8 +23,7 @@ import visual.JanelaLogin;
  */
 public class ControlaJogador extends ComunicadorUDP implements ActionListener, Runnable {
 
-    JanelaLogin jLogin;
-    private DatagramSocket socket;
+    JanelaLogin jLogin;    
     private String nick;
     private ArrayList<Cliente> clientes;
     private boolean emJogo;
@@ -38,7 +37,7 @@ public class ControlaJogador extends ComunicadorUDP implements ActionListener, R
         clientes = new ArrayList<Cliente>();
         emJogo = false;
         oponente = null;
-        login();
+        
     }
 
     /**
@@ -91,18 +90,12 @@ public class ControlaJogador extends ComunicadorUDP implements ActionListener, R
      * ser adicionado na lista de conectados.
      */
     public void montarPacote() {
-
-        InetAddress serverip = null;
-        try {
-
-            // Pôr nome do servidor
-            serverip = InetAddress.getByName("douglas-desktop"/*nome da máquina*/);
+        
+        try {           
 
             // Setando o socket para mandar mensagem para o servidor.
-            socket = new DatagramSocket(5000, serverip);
+            socket = new DatagramSocket(2495);
 
-        } catch (UnknownHostException ex) {
-            JOptionPane.showMessageDialog(null, "Não foi possível encontrar o servidor", "Server Não Localizado", 0);
         } catch (SocketException se) {
             JOptionPane.showMessageDialog(null, "Verificar criação do Socket", "Erro no Socket", 0);
         } catch (IOException ex) {
@@ -119,7 +112,7 @@ public class ControlaJogador extends ComunicadorUDP implements ActionListener, R
         String mensagem = "Login" + "|" + nick;
 
         try {
-            enviaPacoteUDP(mensagem, InetAddress.getByName("server"), 5000);
+            enviaPacoteUDP(mensagem, InetAddress.getByName("douglas-desktop"), 5000);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Não foi possível enviar sua mensagem ao servidor", "Erro na Requisição", 0);
         }
@@ -134,6 +127,8 @@ public class ControlaJogador extends ComunicadorUDP implements ActionListener, R
      */
     public void run() {
 
+        login();
+        
         DatagramPacket pacote = new DatagramPacket(new byte[1024], 1024);
         int estado = 0;
         String[] t = null;
@@ -143,14 +138,16 @@ public class ControlaJogador extends ComunicadorUDP implements ActionListener, R
             //t = lerMensagem(pacote);
 
             //estado = codificaPalavraChave(t[0]);
-            if(controlaSalaDeEspera.isConvidou())
-                estado = 6;
-
+            if(controlaSalaDeEspera != null){
+                if(controlaSalaDeEspera.isConvidou())
+                    estado = 6;
+            }
+            
             switch (estado) { // Escalonador de Pacotes
 
                 case 0:
 
-                    estado = super.recebePacoteUDP();
+                    estado = recebePacoteUDP();
                     break;
 
                 case 1: { // 1. Desafio
@@ -191,9 +188,9 @@ public class ControlaJogador extends ComunicadorUDP implements ActionListener, R
                     Cliente aux = procurarCliente(controlaSalaDeEspera.getOponenteSelecionado());
                 
                     try {
-                    estado = desafiar(InetAddress.getByName(aux.getIp()), aux.getPorta());
+                        estado = desafiar(InetAddress.getByName(aux.getIp()), aux.getPorta());
                     } catch (UnknownHostException ex) {
-                    Logger.getLogger(ControlaJogador.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(ControlaJogador.class.getName()).log(Level.SEVERE, null, ex);
                     }
             }
 

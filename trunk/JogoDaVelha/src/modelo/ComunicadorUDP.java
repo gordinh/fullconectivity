@@ -18,13 +18,13 @@ import java.io.IOException;
  */
 public abstract class ComunicadorUDP {
 
-    private DatagramSocket socket;
+    public DatagramSocket socket;
 
     public ComunicadorUDP(){
         try {
-            socket = new DatagramSocket(3495);
+            socket = new DatagramSocket();
         } catch (SocketException ex) {
-            Logger.getLogger(ComunicadorUDP.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -88,20 +88,23 @@ public abstract class ComunicadorUDP {
 
         DatagramPacket pacoteEnvio = new DatagramPacket(dadosDeRecepcao, dadosDeRecepcao.length, ip, porta);
         DatagramPacket pacoteRecepcao = new DatagramPacket(dadosDeEnvio, dadosDeEnvio.length);
-        do{
+        while(count != 6){
             try {
             socket.send(pacoteEnvio);
+                
             Thread.sleep(800);
+                 
             socket.receive(pacoteRecepcao);
 
             } catch (IOException ex) {
-            Logger.getLogger(ControlaJogador.class.getName()).log(Level.SEVERE, null, ex);
-            } catch(InterruptedException ex){
                 System.out.println(ex.getMessage());
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ComunicadorUDP.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             String s = (new String(pacoteRecepcao.getData()));
             s = s.trim();
+            
             String[] t = lerMensagem(pacoteRecepcao);
 
             if(pacoteRecepcao.equals(pacoteEnvio)){
@@ -109,7 +112,7 @@ public abstract class ComunicadorUDP {
                 return codificaPalavraChave(t[0]);
 
             }
-        }while(count != 6);
+        }
 
         return 10;
     }
