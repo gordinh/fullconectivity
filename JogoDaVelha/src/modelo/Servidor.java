@@ -13,20 +13,23 @@ import java.util.ArrayList;
  *
  * @author douglas
  */
-public class Servidor implements Runnable{
+public class Servidor extends ComunicadorUDP implements Runnable{
 
     
     private ArrayList<Cliente> clientes;
     private String ip;
     private int porta;
-    private DatagramSocket serverSocket;
+    
 
     public Servidor(){
 
        clientes = new ArrayList<Cliente>();
         try {
-            ip = InetAddress.getLocalHost().toString();
+            ip = InetAddress.getByName("douglas-desktop").getHostAddress();
+            socket = new DatagramSocket(1255);
         } catch (UnknownHostException ex) {
+            System.out.println(ex.getMessage());
+        } catch (SocketException ex){
             System.out.println(ex.getMessage());
         }
         porta = 5000;
@@ -99,9 +102,10 @@ public class Servidor implements Runnable{
             int port = dp.getPort();
 
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, endIP, port);
-            
+
+            //enviaPacoteUDP(nick, endIP, porta);
             try {
-                serverSocket.send(sendPacket);
+                socket.send(sendPacket);
             } catch (IOException ex) {
                 System.out.println(ex.getMessage());
             }
@@ -118,7 +122,7 @@ public class Servidor implements Runnable{
 
         try {
             
-            serverSocket = new DatagramSocket(2495);
+            socket = new DatagramSocket(2495);
 
         } catch (SocketException ex) {
             System.out.println(ex.getMessage());
@@ -128,7 +132,7 @@ public class Servidor implements Runnable{
                 receiveData.length);
 
             try {
-                serverSocket.receive(receivePacket);
+                socket.receive(receivePacket);
             } catch (IOException ex) {
                 System.out.println(ex.getMessage());
             }
