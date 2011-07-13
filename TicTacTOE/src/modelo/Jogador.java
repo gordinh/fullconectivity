@@ -19,20 +19,20 @@ public class Jogador {
     private String strIP;
     private InetAddress inetIP;
     private int porta;
-    private boolean emJogo;
+    private boolean status;
 
     public Jogador (String nick,String ip, int porta){
         this.nick = nick;
         this.strIP = ip;
         this.porta = porta;
-        this.emJogo = false;
+        this.status = false;
     }
     public Jogador (String nick, InetAddress addr, int porta){
 
         this.nick = nick;
         this.inetIP = addr;
         this.porta = porta;
-        this.emJogo = false;
+        this.status = false;
         strIP = inetIP.toString();
 
     }
@@ -42,11 +42,11 @@ public class Jogador {
     }
 
     public boolean isEmJogo() {
-        return emJogo;
+        return status;
     }
 
     public void setEmJogo(boolean emJogo) {
-        this.emJogo = emJogo;
+        this.status = emJogo;
     }
     
     public String getIp() {
