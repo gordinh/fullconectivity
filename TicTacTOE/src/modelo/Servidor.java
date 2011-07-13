@@ -37,7 +37,7 @@ public class Servidor implements Runnable{
         }
     }
 
-    public void ReceberMensagens() throws Exception{
+    public void receberMensagens() throws Exception{
         
         serverSocket  = new DatagramSocket(2495);
         
@@ -58,7 +58,7 @@ public class Servidor implements Runnable{
     
     public void run() {
         try {
-            ReceberMensagens();
+            receberMensagens();
         } catch (Exception ex) {
             Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
         }

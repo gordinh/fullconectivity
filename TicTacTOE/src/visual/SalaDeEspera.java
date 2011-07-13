@@ -7,6 +7,7 @@ package visual;
 
 
 import controle.ControlaJogador;
+import controle.StaticControlaJogador;
 import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.*;
@@ -27,14 +28,14 @@ public class SalaDeEspera {
     JLabel logo, info, infoMSG;
     JButton convidar, mensagem;
 
-    public SalaDeEspera(ControlaJogador ctrl, ArrayList conectados){
+    public SalaDeEspera(StaticControlaJogador ctrl, ArrayList<Jogador> conectados){
         clientes = new ArrayList<Jogador>();
         clientes = conectados;
         MontarListaDeConectados();
         mostraJanela(ctrl);
     }
 
-    public void mostraJanela(ControlaJogador ctrl){
+    public void mostraJanela(StaticControlaJogador ctrl){
        
        frame = new JFrame("Jogo da Velha --Sala de Espera");
        panel = new JPanel();     
@@ -72,7 +73,7 @@ public class SalaDeEspera {
        logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/visual/sala.jpg")));
        logo.setBounds( -2, -10, 400, 330);
 
-       convidar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/visual/cabo3.png")));
+       convidar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/visual/fight.gif")));
        convidar.setBounds(150, 280, 120, 100);
        convidar.setToolTipText("Clique para convidar");
 

@@ -4,6 +4,7 @@
  */
 package modelo;
 
+import controle.StaticControlaJogador;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -26,6 +27,7 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
     public DecodificadorDeAcoesDoCliente(DatagramPacket receivedPacket) {
         this.receivedPacket = receivedPacket;
         tipoDeDado = 0; // Dado que chegou foi um pacote
+        
     }
 
     public DecodificadorDeAcoesDoCliente(String controle) {
@@ -42,14 +44,16 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
 
         if (tipoDeDado == 0) {
             String sentencaMod = (new String(receivedPacket.getData()).trim());
-            System.out.println(" \n [metodo decodificador] DecodificadorDeAcoesDoCliente diz, recebi uma mensagem seu conteúdo é: " + sentencaMod);
+            System.out.println(" \n [metodo decodificador] DecodificadorDeAcoesDoCliente diz, recebi um pacote seu conteúdo é: " + sentencaMod);
             split = sentencaMod.split(":");
             
-            if(split[1].equalsIgnoreCase("ListaDeOponentes")){
-                
+            if(split[1].equalsIgnoreCase("ListaDeOponentes,")){
+                chamarOUatualizarSalaDeEspera(sentencaMod);
             }
             
         } else if (tipoDeDado == 1) {
+            
+            System.out.println(" \n [metodo decodificador] DecodificadorDeAcoesDoCliente diz, recebi uma string seu conteúdo é: " + controle);
             
             split = controle.split(":");
             
@@ -72,12 +76,22 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
             String mensagem = ":" + "Login" + ":" + nick + ":";
 
             System.out.println("\n [metodo cadastro no servidor] Controla Jogador diz: Enviando soliticação de castastro no servidor.");
-            Thread envioPersistente = new Thread(new EmissorUDP(mensagem, InetAddress.getByName("192.168.0.146"), 2495));
+            Thread envioPersistente = new Thread(new EmissorUDP(mensagem, InetAddress.getByName("10.65.98.11"), 2495));
             envioPersistente.start();
 
         } catch (UnknownHostException ex) {
             System.out.println("Erro em: ControlaJogador.CadastroNoServidor");
         }
-
     }
+    
+    /**
+     * A função deste método é informar à "sala de espera" a situação dos oponentes, em relação ao seu status atual.
+     */
+    public void chamarOUatualizarSalaDeEspera(String lista){
+        
+        StaticControlaJogador.getInstance().atualizaListaDeOponentes(lista);
+        StaticControlaJogador.getInstance().chamaSalaDeEspera();
+        
+    }
+           
 }

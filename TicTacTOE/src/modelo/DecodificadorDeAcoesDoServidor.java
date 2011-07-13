@@ -108,14 +108,14 @@ public class DecodificadorDeAcoesDoServidor implements Runnable{
         
         ArrayList<Jogador> listaDeRetorno = BancoOnlineDoServidor.getInstance().retornaListaDeCasdastrados();
 
-        String s = ":ListaDeOponentes:";
+        String s = ":ListaDeOponentes,"; // a virgula aqui é importante visto que quando o cliente for remontar a lista ele precisa eliminar a palavra de controle //
         // A String enviada conterá os os seguintes dados:
         // Nick:Ip:Porta e uma virgula para separara usuarios direrentes
         // Ex.: João:10.65.99.33:5000, Douglas|10.65.128.75|2495, etc...
 
         for(int i = 0;i < listaDeRetorno.size(); i++){
             if(!listaDeRetorno.get(i).getNick().equalsIgnoreCase(nick))
-                s = s + (listaDeRetorno.get(i).getNick())+ ":" + listaDeRetorno.get(i).getIp()+ ":" + listaDeRetorno.get(i).getPorta() + ",";
+                s = s + ":" +(listaDeRetorno.get(i).getNick())+ ":" + listaDeRetorno.get(i).getIp()+ ":" + listaDeRetorno.get(i).getPorta() + ","; // :nic
 
         }
 
