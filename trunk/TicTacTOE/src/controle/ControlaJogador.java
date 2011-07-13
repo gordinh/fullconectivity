@@ -37,7 +37,7 @@ public class ControlaJogador implements ActionListener {
 
     public ControlaJogador() {
 
-        jLogin = new JanelaLogin(this);
+      //  jLogin = new JanelaLogin(this);
         oponentes = new ArrayList<Jogador>();
         sala = null;
 
@@ -150,7 +150,7 @@ public class ControlaJogador implements ActionListener {
 
     public void chamaSala() {
 
-        sala = new SalaDeEspera(this, oponentes);
+       // sala = new SalaDeEspera(this, oponentes);
 
         Thread jogo = new Thread(new ServidorEspecifico());
         jogo.start();

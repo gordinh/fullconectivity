@@ -6,6 +6,7 @@
 package tictactoe;
 
 import controle.ControlaJogador;
+import controle.StaticControlaJogador;
 
 /**
  *
@@ -19,8 +20,7 @@ public class Main {
     public static void main(String[] args) {
         // TODO code application logic here
 
-        ControlaJogador controla = new ControlaJogador();
-        
+        StaticControlaJogador.getInstance().mostraJanelaDeLogin();
         
 
     }

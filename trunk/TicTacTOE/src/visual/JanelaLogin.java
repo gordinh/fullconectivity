@@ -6,6 +6,7 @@
 package visual;
 
 import controle.ControlaJogador;
+import controle.StaticControlaJogador;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,6 +26,10 @@ public class JanelaLogin {
     JLabel logo;
     JTextField nick;
     JButton enter;
+
+    public JanelaLogin(StaticControlaJogador ctrl) {
+        mostraJanela(ctrl);
+    }
 
     public JFrame getFrame() {
         return frame;
@@ -57,14 +62,10 @@ public class JanelaLogin {
     public void setPanel(JPanel panel) {
         this.panel = panel;
     }
-
-    public JanelaLogin (ControlaJogador ctrlCLI){
-
-        mostraJanela(ctrlCLI);
-    }
+    
 
 
-    public void mostraJanela(ControlaJogador ctrlCLI){
+    public void mostraJanela(StaticControlaJogador ctrlCLI){
 
        // Instaciação dos componentes
        frame = new JFrame("Jogo da Velha --Login");
