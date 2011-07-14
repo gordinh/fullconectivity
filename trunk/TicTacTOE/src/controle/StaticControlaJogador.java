@@ -72,6 +72,18 @@ public class StaticControlaJogador implements ActionListener{
         
     }
 
+    public synchronized Jogador retornaOponenteDaLista(String nick){
+        Jogador oponente = null;
+
+        for(int i=0; i<= oponentes.size(); i++){
+            if(oponentes.get(i).getNick().equalsIgnoreCase(nick) ){
+                oponente = oponentes.get(i);
+                break;
+            }
+        }
+        return oponente;
+    }
+
     
      public void actionPerformed(ActionEvent e) {
 
@@ -97,6 +109,11 @@ public class StaticControlaJogador implements ActionListener{
             if (sala.lista.getSelectedValue() != null) {
 
                 oponenteSelecionado = sala.lista.getSelectedValue().toString();
+                
+                String controle =  ":enviarConvite:" + oponenteSelecionado;
+
+                Thread convidarOponente = new Thread(new DecodificadorDeAcoesDoCliente(controle));
+                convidarOponente.start();
                 
 
             } else {
