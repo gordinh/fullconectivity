@@ -41,7 +41,13 @@ public class Jogador {
 
     }
 
-    public boolean isEmJogo() {
+    /**
+     * Retorna o status do jogador. O método retona true se o jogador estiver conectado (online)
+     * e false se o jogador estiver desconectado (offline).
+     *
+     * @return status
+     */
+    public boolean getStatus() {
         return status;
     }
 
