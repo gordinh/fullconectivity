@@ -56,6 +56,10 @@ public class StaticControlaJogador implements ActionListener{
      * Esse método limpa a lista atual, isto é, apaga todos os elementos dela e a
      * seguir preenche-a armazenando os novos dados.
      * 
+     * A string recebida tem o seguinte formato ":PalavraDeControle:Nick:IP:Porta:Status:Pontuacao,".
+     * O caracter dois pontos é usado para identificar cada atributo do jogador, e o caracter virgula é usado para identificar o final das informações referentes
+     * a um jogaodor.
+     * 
      */
     public synchronized void atualizaListaDeOponentes(String listaConcatenada){
        
@@ -66,7 +70,8 @@ public class StaticControlaJogador implements ActionListener{
 
         for (int i = 1; i <= aux.length-1; i++) { // 0ª célula do vetor: lixo, 1ª célula: palavra de controle, 2ª célua: primeiro oponente //
             String[] u = aux[i].split(":");
-            Jogador novoOponente = new Jogador(u[1], u[2], Integer.parseInt(u[3])); // Na ordem: u[0] = Nick, u[1] = ip e u[2] = porta //
+                                  // Na ordem: u[1] == NICK, u[2] == IP, u[3] == PORTA, u[4] == STARUS e u[5] == PONTUACAO //
+            Jogador novoOponente = new Jogador(u[1], u[2], Integer.parseInt(u[3]), Integer.parseInt(u[4]), Integer.parseInt(u[5])); 
             oponentes.add(novoOponente);
         }
         

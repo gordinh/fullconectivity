@@ -44,7 +44,7 @@ public class DecodificadorDeAcoesDoServidor implements Runnable{
             
             if(split[1].trim().equalsIgnoreCase("Login")){
                 validaRecepção();
-                BancoOnlineDoServidor.getInstance().cadastroNaLista(split[2].trim(), receivePacket.getAddress(), receivePacket.getPort());
+                BancoOnlineDoServidor.getInstance().cadastroNaLista(split[2].trim(), receivePacket.getAddress(), receivePacket.getPort(), 1); // 1 = status online
                 retornaListaAoCliente(receivePacket, split[2]);
             }
            // else if (split[1].trim().equalsIgnoreCase("Lista"))
@@ -56,20 +56,7 @@ public class DecodificadorDeAcoesDoServidor implements Runnable{
      *  Avisa ao cliente que sua mensagem chegou
      */
     public void validaRecepção(){
-        /*try {
-            System.out.println("\n [metodo valida recepção] DecodificadorDeAcoesDoServidor diz: Mensgem válida! Vou avisar que chegou!");
-
-            String Result = ":ok";
-            InetAddress endIP = receivePacket.getAddress();
-            int port = receivePacket.getPort();
-            byte[] sendData = Result.getBytes();
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, endIP, port);
-            tempSocket.send(sendPacket);
-           
-
-        } catch (IOException ex) {
-            Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
+       
             Thread valida = new Thread(new EmissorUDP(":ok", receivePacket.getAddress(), receivePacket.getPort()));
             valida.start();
     }
@@ -96,11 +83,13 @@ public class DecodificadorDeAcoesDoServidor implements Runnable{
     }
 
     /**
-     *
-     * Método para montar a String que será enviada para o cliente receptor
-     * contendo os dados dos usuários conectados até então.
+     * Monta a lista que será retornada a um jogador. O parametro entrada impede que um jogador tenha a sí proprio na sua lista de adversários.
+     * A string retornada tem o seguinte formato ":PalavraDeControle:Nick:IP:Porta:Status:Pontuacao,".
+     * O caracter dois pontos é usado para identificar cada atributo do jogador, e o caracter virgula é usado para identificar o final das informações referentes
+     * a um jogaodor
+     * 
      * @param nick
-     * @return String ja convertida em bytes
+     * @return String lista
      */
     public String MontarStringJogadores(String nick){
 
@@ -113,9 +102,10 @@ public class DecodificadorDeAcoesDoServidor implements Runnable{
         // Nick:Ip:Porta e uma virgula para separara usuarios direrentes
         // Ex.: João:10.65.99.33:5000, Douglas|10.65.128.75|2495, etc...
 
-        for(int i = 0;i < listaDeRetorno.size(); i++){
+        for(int i = 0;i < listaDeRetorno.size(); i++){ 
             if(!listaDeRetorno.get(i).getNick().equalsIgnoreCase(nick))
-                s = s + ":" +(listaDeRetorno.get(i).getNick())+ ":" + listaDeRetorno.get(i).getIp()+ ":" + listaDeRetorno.get(i).getPorta() + ","; // :nic
+                s = s + ":" +(listaDeRetorno.get(i).getNick())+ ":" + listaDeRetorno.get(i).getIp()+ ":" + listaDeRetorno.get(i).getPorta() + ":" +
+                               listaDeRetorno.get(i).getStatus() + ":" + listaDeRetorno.get(i).getPontuacao() +","; 
 
         }
 
