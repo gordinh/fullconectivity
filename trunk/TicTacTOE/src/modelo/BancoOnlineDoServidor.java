@@ -47,11 +47,11 @@ public class BancoOnlineDoServidor {
      * @param addr
      * @param porta 
      */
-    public void cadastroNaLista(String nick, InetAddress addr, int porta){
+    public void cadastroNaLista(String nick, InetAddress addr, int porta, int status){
         
         System.out.println("\n [metodo cadastro na lista] BancoOnlineDoServidor diz: cadastrando " + nick + " na lista");
 
-        Jogador novo = new Jogador(nick, addr, porta);
+        Jogador novo = new Jogador(nick, addr, porta, status);
         
         synchronized(jogadoresCadastrados){
         jogadoresCadastrados.add(novo);}

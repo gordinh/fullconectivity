@@ -139,8 +139,8 @@ public class ControlaJogador implements ActionListener {
 
         for (int i = 0; i < aux.length; i++) {
             String[] u = aux[i].split(":");
-            Jogador novoOponente = new Jogador(u[0], u[1], Integer.parseInt(u[2])); // Na ordem: u[0] = Nick, u[1] = ip e u[2] = porta
-            oponentes.add(novoOponente);
+            //Jogador novoOponente = new Jogador(u[0], u[1], Integer.parseInt(u[2])); // Na ordem: u[0] = Nick, u[1] = ip e u[2] = porta
+            //oponentes.add(novoOponente);
         }
 
 

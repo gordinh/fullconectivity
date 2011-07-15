@@ -85,7 +85,7 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
             String mensagem = ":" + "Login" + ":" + nick + ":";
 
             System.out.println("\n [metodo cadastro no servidor] Controla Jogador diz: Enviando soliticação de castastro no servidor.");
-            Thread envioPersistente = new Thread(new EmissorUDP(mensagem, InetAddress.getByName("10.65.96.254"), 2495));
+            Thread envioPersistente = new Thread(new EmissorUDP(mensagem, InetAddress.getByName("192.168.0.146"), 2495));
             envioPersistente.start();
 
         } catch (UnknownHostException ex) {
@@ -94,7 +94,9 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
     }
 
     /**
-     * A função deste método é informar à "sala de espera" a situação dos oponentes, em relação ao seu status atual.
+     *  A função deste método é informar à "sala de espera" a situação dos oponentes, em relação ao seu status atual.
+     *  
+     * @param lista 
      */
     public void chamarOUatualizarSalaDeEspera(String lista) {
 
@@ -134,12 +136,12 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
 
         Jogador temp = StaticControlaJogador.getInstance().retornaOponenteDaLista(nick);
 
-        String controle = ":" + ":TeDesafio:" + temp.getNick();
+        String ctrl = ":" + ":TeDesafio:" + temp.getNick();
 
         try {
 
-            if (temp.getStatus()) {
-                Thread desafiaOponente = new Thread(new EmissorUDP(controle, InetAddress.getByName(temp.getIp()), temp.getPorta()));
+            if (temp.getStatus() == 1) {
+                Thread desafiaOponente = new Thread(new EmissorUDP(ctrl, InetAddress.getByName(temp.getIp()), temp.getPorta()));
             } else {
                 JOptionPane.showMessageDialog(null, nick + " está desconectado. \nVocê não pode "
                         + "desafiar jogadores desconectados!", "Informação", 1);
