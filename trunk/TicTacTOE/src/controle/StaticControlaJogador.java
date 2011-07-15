@@ -36,6 +36,7 @@ public class StaticControlaJogador implements ActionListener{
     private String oponenteSelecionado;
     private Thread escuta;
     private String IPdoServidor;
+    private String meuIP;
   
     
     private StaticControlaJogador(){
@@ -156,7 +157,9 @@ public class StaticControlaJogador implements ActionListener{
         }else if(e.getSource() == jLogin.getConfiguracao()) {
             
             IPdoServidor = JOptionPane.showInputDialog("Digite o IP do servidor: ");
-            System.out.println("IPdoServidor " + IPdoServidor);
+            //System.out.println("IPdoServidor " + IPdoServidor);
+            meuIP = JOptionPane.showInputDialog("Digite o IP do seu computador: ");
+
                         
         } else if (e.getSource() == sala.getConvidar()) {
 
@@ -176,6 +179,10 @@ public class StaticControlaJogador implements ActionListener{
             }
 
         }
+    }
+
+    public String getMeuIP() {
+        return meuIP;
     }
     
 }
