@@ -30,11 +30,9 @@ public class Servidor implements Runnable{
     
     public Servidor(){
         // Para fins de teste. Não manter a lista vazia.
-        try {
-            BancoOnlineDoServidor.getInstance().cadastroNaLista("fixo",InetAddress.getLocalHost(), 8080, 0);
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    
+            BancoOnlineDoServidor.getInstance().cadastroNaLista("fixo","192.168.0.0", 8080, 0);
+        
     }
 
     public void receberMensagens() throws Exception{

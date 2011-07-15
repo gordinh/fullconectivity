@@ -20,9 +20,9 @@ public class Jogador {
     private int status;
     private int pontuacao;
 
-    public Jogador(String nick, String ip, int porta, int status, int pontuacao) {
+    public Jogador(String nick, String addr, int porta, int status, int pontuacao) {
         this.nick = nick;
-        this.strIP = ip;
+        this.strIP = addr;
         this.porta = porta;
         this.status = status;
         this.pontuacao = pontuacao;

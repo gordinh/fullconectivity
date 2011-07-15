@@ -8,6 +8,8 @@ import controle.StaticControlaJogador;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -82,11 +84,11 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
 
 
         try {
-            String mensagem = ":" + "Login" + ":" + nick + ":";
+            String mensagem = ":" + "Login" + ":" + nick + ":" + StaticControlaJogador.getInstance().getMeuIP();
 
-            System.out.println("\n [metodo cadastro no servidor] Controla Jogador diz: Enviando soliticação de castastro no servidor.");
-            Thread envioPersistente = new Thread(new EmissorUDP(mensagem, InetAddress.getByName(StaticControlaJogador.getInstance().getIPdoServidor()), 2495));
-            envioPersistente.start();
+            System.out.println("\n [metodo cadastro no servidor] Controla Jogador diz: Enviando soliticação de castastro no servidor."); // 10.65.98.134
+            Thread fazLogin = new Thread(new EmissorUDP(mensagem, InetAddress.getByName(StaticControlaJogador.getInstance().getIPdoServidor()), 2495));
+            fazLogin.start();
 
         } catch (UnknownHostException ex) {
             System.out.println("Erro em: ControlaJogador.CadastroNoServidor");
@@ -115,14 +117,15 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
 
         String[] split = sentencaMod.split(":");
 
-       
-        int resp = JOptionPane.showConfirmDialog(null, split[3] + " desafiou você para uma partida. " , "Desfio", 0);
 
-        if(resp == 0){ // Aceitei o desafio
+        int resp = JOptionPane.showConfirmDialog(null, split[2] + " desafiou você para uma partida. ", "Desfio", 0);
+
+        if (resp == 0) { // Aceitei o desafio
             
-        }
-        else if(resp == 1){ // Neguei o desafio
+            JOptionPane.showMessageDialog(null,"Eu acceito o desafio " , "Informação", 1);
             
+        } else if (resp == 1) { // Neguei o desafio
+           JOptionPane.showMessageDialog(null,"Eu não acceito o desafio " , "Informação", 1);
         }
 
     }
@@ -133,25 +136,31 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
      * @param nick
      */
     public void desafiarOponente(String nick) {
+        
+        System.out.println("[metodo desafiarOponente] DecodificadorDeAcoesDoCliente diz, Vou enviar o convite");
 
         Jogador temp = StaticControlaJogador.getInstance().retornaOponenteDaLista(nick);
 
-        String ctrl = ":" + ":TeDesafio:" + StaticControlaJogador.getInstance().getNick();
+        String ctrl = ":" + "TeDesafio:" + StaticControlaJogador.getInstance().getNick();
 
-        try {
 
-            if (temp.getStatus() == 1) {
-                Thread desafiaOponente = new Thread(new EmissorUDP(ctrl, InetAddress.getByName(temp.getIp()), temp.getPorta()));
-            } else {
-                JOptionPane.showMessageDialog(null, nick + " está desconectado. \nVocê não pode "
-                        + "desafiar jogadores desconectados!", "Informação", 1);
+        if (temp.getStatus() == 1) {
+            try {
+
+                //InetAddress ip = InetAddress.getByName(temp.getIp());
+
+                Thread desafiaOponente = new Thread(new EmissorUDP(ctrl, InetAddress.getByName(temp.getIp()), 9090));
+                desafiaOponente.start();
+
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(DecodificadorDeAcoesDoCliente.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (UnknownHostException ex) {
-            JOptionPane.showMessageDialog(null, "Não foi possível desafiar " + nick
-                    + ". \n Tente novamente", "Erro", 0);
-
+        } else {
+            JOptionPane.showMessageDialog(null, nick + " está desconectado. \nVocê não pode "
+                    + "desafiar jogadores desconectados!", "Informação", 1);
         }
 
+         System.out.println("[metodo desafiarOponente] DecodificadorDeAcoesDoCliente diz, Convite enviado, aguardado resposta...");
         //bruno soares de araujo simoes
     }
 }
