@@ -5,7 +5,6 @@
 
 package visual;
 
-import controle.ControlaJogador;
 import controle.StaticControlaJogador;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -26,6 +25,7 @@ public class JanelaLogin {
     JLabel logo;
     JTextField nick;
     JButton enter;
+    JButton configuracao;
 
     public JanelaLogin(StaticControlaJogador ctrl) {
         mostraJanela(ctrl);
@@ -73,12 +73,15 @@ public class JanelaLogin {
        logo = new JLabel();
        nick = new JTextField();
        enter = new JButton("Entrar");
+       configuracao = new JButton();
+       
 
        //Amarrando os componentes
        frame.getContentPane().add(panel);
        panel.add(logo);
        panel.add(nick);
        panel.add(enter);
+       panel.add(configuracao);
 
        //Propriedades da Janela
        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -95,12 +98,19 @@ public class JanelaLogin {
        logo.setBounds( 25, -35, 400, 330);
        nick.setBounds(100, 270, 100, 20);
        enter.setBounds(110, 300, 85, 40);
+       configuracao.setBounds(230, 330, 48, 42);
+       configuracao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/visual/Little-blue-gear-icon.png")));
 
        //Adicionando disparador de eventos (ouvinte)
        enter.addActionListener(ctrlCLI);
+       configuracao.addActionListener(ctrlCLI);
        
     }
 
+    /**
+     * Retorna um JButon para verificação de disparo de evento
+     * @return 
+     */
     public JButton getEnter(){        
         return enter;
     }    
@@ -108,5 +118,13 @@ public class JanelaLogin {
     public void Visible(boolean b){
         
        frame.setVisible(b);
+    }
+    
+    /**
+     * Retorna um JButon para verificação de disparo de evento
+     * @return 
+     */
+    public JButton getConfiguracao(){
+        return configuracao;
     }
 }

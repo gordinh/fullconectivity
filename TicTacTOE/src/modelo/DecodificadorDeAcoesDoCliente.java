@@ -85,7 +85,7 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
             String mensagem = ":" + "Login" + ":" + nick + ":";
 
             System.out.println("\n [metodo cadastro no servidor] Controla Jogador diz: Enviando soliticação de castastro no servidor.");
-            Thread envioPersistente = new Thread(new EmissorUDP(mensagem, InetAddress.getByName("192.168.0.146"), 2495));
+            Thread envioPersistente = new Thread(new EmissorUDP(mensagem, InetAddress.getByName(StaticControlaJogador.getInstance().getIPdoServidor()), 2495));
             envioPersistente.start();
 
         } catch (UnknownHostException ex) {
@@ -136,7 +136,7 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
 
         Jogador temp = StaticControlaJogador.getInstance().retornaOponenteDaLista(nick);
 
-        String ctrl = ":" + ":TeDesafio:" + temp.getNick();
+        String ctrl = ":" + ":TeDesafio:" + StaticControlaJogador.getInstance().getNick();
 
         try {
 

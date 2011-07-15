@@ -5,7 +5,6 @@
 
 package tictactoe;
 
-import controle.ControlaJogador;
 import controle.StaticControlaJogador;
 
 /**
