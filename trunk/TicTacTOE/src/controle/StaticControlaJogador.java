@@ -15,7 +15,15 @@ import visual.JanelaLogin;
 import visual.SalaDeEspera;
 
 /**
- *
+ * Esta classe tem a função de ouvir, processar e realizar ações com relação
+ * a todos os eventos gerados pela interface gráfica.
+ * Neste programa, só esta classe tem poder de alterar/modificar a interface gráfica.
+ * Não era desejado que todas as vezes que fosse preciso modificar a interface gráfica,
+ * uma instância desta classe fosse criada. Por isso, essa classe é estática e usa o padrão
+ * SingleTon. 
+ * Pela existência da concorrência, todos os seus métodos são sincronizados. Para que, dessa
+ * forma, os recursos desejados sejam compartilhados de forma eficiênte.
+ * 
  * @author AndreLuiz
  */
 public class StaticControlaJogador implements ActionListener{
@@ -27,6 +35,7 @@ public class StaticControlaJogador implements ActionListener{
     private SalaDeEspera sala = null;
     private String oponenteSelecionado;
     private Thread escuta;
+    private String IPdoServidor;
   
     
     private StaticControlaJogador(){
@@ -35,7 +44,11 @@ public class StaticControlaJogador implements ActionListener{
         oponentes = new ArrayList<Jogador>();
         
     }
-        
+     /**
+     * Retorna uma instância do objeto estatico StaticControlaJogador
+     * 
+     * @return 
+     */   
     public static StaticControlaJogador getInstance(){
         
         if( controladorEstatico == null)
@@ -44,16 +57,22 @@ public class StaticControlaJogador implements ActionListener{
         
     }
     
+    /**
+     *  Metodo que instancia a janela de login
+     */
     public synchronized void mostraJanelaDeLogin(){
         jLogin = new JanelaLogin(this);
     }
     
+    /**
+     * Método que instacia a janela da "sala de espera"
+     */
     public synchronized void chamaSalaDeEspera(){
         sala = new SalaDeEspera(this, oponentes);
     }
     
     /**
-     * Esse método limpa a lista atual, isto é, apaga todos os elementos dela e a
+     * Esse método limpa a lista local, isto é, apaga todos os elementos dela e a
      * seguir preenche-a armazenando os novos dados.
      * 
      * A string recebida tem o seguinte formato ":PalavraDeControle:Nick:IP:Porta:Status:Pontuacao,".
@@ -76,7 +95,14 @@ public class StaticControlaJogador implements ActionListener{
         }
         
     }
-
+    
+    
+    /**
+     * Retorna um oponente da lista local mantida pelo cliente.
+     * 
+     * @param nick
+     * @return 
+     */
     public synchronized Jogador retornaOponenteDaLista(String nick){
         Jogador oponente = null;
 
@@ -88,8 +114,26 @@ public class StaticControlaJogador implements ActionListener{
         }
         return oponente;
     }
+    
+    /**
+     * Retorna o nick do jogador
+     * @return 
+     */
+    public synchronized String getNick(){
+        return nick;
+    }
+    
+    public synchronized String getIPdoServidor(){
+        return IPdoServidor;
+    }
 
     
+    /**
+     * Neste método é feita a indentificação e o tratamento inicial de todos os eventos 
+     * gerados na interface gráfica do programa. A classe que faz o tratamento mais refinado é DecodificadorDeAcoesDoCliente.
+     * 
+     * @param e 
+     */
      public void actionPerformed(ActionEvent e) {
 
         nick = jLogin.getNick().getText();
@@ -109,6 +153,11 @@ public class StaticControlaJogador implements ActionListener{
                 JOptionPane.showMessageDialog(null, "Seu nick deve conter de 1 a 8 caracteres", "Login Inválido", 0);
             }
 
+        }else if(e.getSource() == jLogin.getConfiguracao()) {
+            
+            IPdoServidor = JOptionPane.showInputDialog("Digite o IP do servidor: ");
+            System.out.println("IPdoServidor " + IPdoServidor);
+                        
         } else if (e.getSource() == sala.getConvidar()) {
 
             if (sala.lista.getSelectedValue() != null) {
