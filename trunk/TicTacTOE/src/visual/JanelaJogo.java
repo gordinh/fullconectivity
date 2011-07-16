@@ -28,10 +28,14 @@ public class JanelaJogo extends Observable {
             button21, button22, button23,
             button31, button32, button33;
     JTextArea text;
+    private String barraDeTitulo;
     
-    public JanelaJogo() {
-
-        mostraJanela();
+    public JanelaJogo(String nick, boolean euComeco) {
+        
+        //barraDeTitulo = "Jogo da Velha - Partida contra: " + nick ;
+        
+        mostraJanela(barraDeTitulo = "Jogo da Velha - Partida contra: " + nick);
+        setEditFrame(euComeco);
     }
 
     /**
@@ -39,10 +43,10 @@ public class JanelaJogo extends Observable {
      * arrumação dos componentes na tela. As propriedades de todos os elementos
      * gráficos utilizados são ajustadas aqui.
      */
-    public void mostraJanela(){
+    public void mostraJanela(String barraDeTitulo){
 
     // Instanciando os componentes gráficos
-        frame = new JFrame("Jogo da Velha");
+        frame = new JFrame(barraDeTitulo);
         panel = new JPanel();
         button11 = new JButton();
         button12 = new JButton();

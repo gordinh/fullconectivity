@@ -122,7 +122,7 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
 
         if (resp == 0) { // Aceitei o desafio
             
-            JOptionPane.showMessageDialog(null,"Eu acceito o desafio " , "Informação", 1);
+            StaticControlaJogador.getInstance().adicionaNovaPartida(split[2], split[3], false);
             
         } else if (resp == 1) { // Neguei o desafio
            JOptionPane.showMessageDialog(null,"Eu não acceito o desafio " , "Informação", 1);
@@ -141,7 +141,7 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
 
         Jogador temp = StaticControlaJogador.getInstance().retornaOponenteDaLista(nick);
 
-        String ctrl = ":" + "TeDesafio:" + StaticControlaJogador.getInstance().getNick();
+        String ctrl = ":" + "TeDesafio:" + StaticControlaJogador.getInstance().getNick() + ":" + StaticControlaJogador.getInstance().getMeuIP();
 
 
         if (temp.getStatus() == 1) {

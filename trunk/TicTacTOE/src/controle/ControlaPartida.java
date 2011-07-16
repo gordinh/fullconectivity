@@ -4,8 +4,6 @@
  */
 package controle;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Observable;
@@ -13,29 +11,32 @@ import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import modelo.EmissorUDP;
-import modelo.Jogador;
 import modelo.Matriz;
 import visual.JanelaJogo;
 
 /**
- * Classe responsável por gerenciar todas interações entre jogador e aplicação.
+ * Classe responsável por escutar a interface gráfica da partida propriamente dita.
+ * 
  * @author andre
  */
-public class ControlaJanelaJogo implements Observer  {
+public class ControlaPartida implements Observer  {
 
     private JanelaJogo janela;
     private Matriz mat;
     private int round = 0;
-    private DatagramSocket socketJogo;
-    private Jogador oponente;
+    private String nickOponente;
+    private String ipOponente;
     private boolean fimRodada;
-    DatagramPacket info;
+    private boolean euComeco;
+    
 
-    public ControlaJanelaJogo(DatagramPacket info) {
-
-        this.info = info;
-
-        janela = new JanelaJogo();
+    public ControlaPartida(String nick, String ip, boolean euComeco) {
+               
+        this.nickOponente = nick;
+        this.ipOponente = ip;
+        this.euComeco = euComeco;
+        
+        janela = new JanelaJogo(nickOponente, euComeco);
         janela.addObserver(this);
         janela.setText("Player 1 jogando...");
 
@@ -47,10 +48,16 @@ public class ControlaJanelaJogo implements Observer  {
 
        String ctrl = (String) arg;
 
-       String controle = "Jogada:" + ctrl;
+       String controle = ":Jogada:" + StaticControlaJogador.getInstance().getNick() + ":" +ctrl;
 
-       Thread enviaJogada = new Thread(new EmissorUDP(controle, info.getAddress(), 1010));
-       enviaJogada.start();
+       Thread enviaJogada;
+        try {
+            enviaJogada = new Thread(new EmissorUDP(controle, InetAddress.getByName(ipOponente) , 9090));
+            enviaJogada.start();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(ControlaPartida.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
 
        refresh(ctrl);
      
