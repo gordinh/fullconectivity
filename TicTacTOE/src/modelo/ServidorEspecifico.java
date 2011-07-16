@@ -5,7 +5,7 @@
 
 package modelo;
 
-import controle.ControlaJanelaJogo;
+import controle.ControlaPartida;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -22,7 +22,7 @@ public class ServidorEspecifico implements Runnable {
 
     public DatagramSocket serverSocket;
     DatagramPacket receivePacket;
-    ControlaJanelaJogo janelaJogo;
+    ControlaPartida janelaJogo;
 
     public ServidorEspecifico(){
 
@@ -73,7 +73,7 @@ public class ServidorEspecifico implements Runnable {
             else if(split[1].trim().equalsIgnoreCase("Aceito")){
                 validaRecepção();
                 desafioAceito();
-                janelaJogo = new ControlaJanelaJogo(receivePacket);
+                //janelaJogo = new ControlaPartida(receivePacket);
            }
             else if(split[1].trim().equalsIgnoreCase("Jogada")){
                 validaRecepção();

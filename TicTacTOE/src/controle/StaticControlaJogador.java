@@ -37,13 +37,15 @@ public class StaticControlaJogador implements ActionListener{
     private Thread escuta;
     private String IPdoServidor;
     private String meuIP;
-  
+    private ControlaPartida[] minhasPartidas;
+ 
     
     private StaticControlaJogador(){
         escuta = new Thread(new ReceporDeMensagensDoCliente());
         escuta.start();
         oponentes = new ArrayList<Jogador>();
         
+        inializaVetorDePartidas(10);
     }
      /**
      * Retorna uma instância do objeto estatico StaticControlaJogador
@@ -180,9 +182,44 @@ public class StaticControlaJogador implements ActionListener{
 
         }
     }
-
+     /**
+      * Retorna o ip do jogador
+      * @return 
+      */
     public String getMeuIP() {
         return meuIP;
+    }
+    
+    /**
+     * Inicializa o vetor de partida do jogador
+     * @param tamVetor 
+     */
+    private void inializaVetorDePartidas(int tamVetor) {
+       minhasPartidas  = new ControlaPartida[tamVetor];
+        
+       for(int i=0; i < minhasPartidas.length; i++){
+           minhasPartidas[i] = null;
+       }
+           
+    }
+    
+    /**
+     * Cria uma nova partida e adiciona no vetor de partidas do jogador.
+     * 
+     * @param nickOponente
+     * @param ipOponente
+     * @param euComeco 
+     */
+    public void adicionaNovaPartida(String nickOponente, String ipOponente, boolean euComeco){
+        
+        ControlaPartida novaPartida = new ControlaPartida(nickOponente, ipOponente, euComeco);
+        
+        for(int i=0; i <= minhasPartidas.length; i++){
+            if(minhasPartidas[i] == null){
+                minhasPartidas[i] = novaPartida;
+                break;
+            }
+       }
     }
     
 }
