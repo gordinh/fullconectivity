@@ -54,9 +54,13 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
                 chamarOUatualizarSalaDeEspera(sentencaMod);
             } else if (split[1].equalsIgnoreCase("TeDesafio")) {
                 recebiConvite(sentencaMod);
+            } else if(split[1].equalsIgnoreCase("AceitoDesafio")){
+                oponenteAceitouDesafio(sentencaMod);
+            } else if(split[1].equalsIgnoreCase("Jogada")){
+                jogadaDoOponente(sentencaMod);
             }
-            //else if(split[1].equalsIgnoreCase(""))
-            //;
+
+            
         } else if (tipoDeDado == 1) {
 
             System.out.println(" \n [metodo decodificador] DecodificadorDeAcoesDoCliente diz, recebi uma string seu conteúdo é: " + controle);
@@ -123,9 +127,17 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
         if (resp == 0) { // Aceitei o desafio
             
             StaticControlaJogador.getInstance().adicionaNovaPartida(split[2], split[3], false);
+            try {
+                String control = ":AceitoDesafio:" + StaticControlaJogador.getInstance().getNick() + ":" + StaticControlaJogador.getInstance().getMeuIP();
+                Thread aceiteiPartida = new Thread(new EmissorUDP(control, InetAddress.getByName(split[3]), 9090));
+                aceiteiPartida.start();
+                
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(DecodificadorDeAcoesDoCliente.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
         } else if (resp == 1) { // Neguei o desafio
-           JOptionPane.showMessageDialog(null,"Eu não acceito o desafio " , "Informação", 1);
+           JOptionPane.showMessageDialog(null,"Eu não aceito o desafio " , "Informação", 1);
         }
 
     }
@@ -161,6 +173,34 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
         }
 
          System.out.println("[metodo desafiarOponente] DecodificadorDeAcoesDoCliente diz, Convite enviado, aguardado resposta...");
-        //bruno soares de araujo simoes
+        
+    }
+
+    
+
+   /**
+    * Se o oponente aceitar o desafio, esse método é chamado para instanciar
+    * uma nova partida para quem fez o desafio.
+    * 
+    * @param sentencaMod
+    */
+    public void oponenteAceitouDesafio(String sentencaMod){
+
+        String[] split = sentencaMod.split(":");
+
+        StaticControlaJogador.getInstance().adicionaNovaPartida(split[2], split[3], true);
+    }
+
+    /**
+     * Método que propicia ao Decodificador de ações do cliente, informar ao controlador geral (StaticControlaJogador)
+     * que ele deve atualizar uma janela.
+     * 
+     * @param sentencaMod 
+     */
+    public void jogadaDoOponente(String sentencaMod) {
+
+        String[] split = sentencaMod.split(":");
+
+        StaticControlaJogador.getInstance().atualizaJanelaJogo(split[2],split[3]);
     }
 }

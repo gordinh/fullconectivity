@@ -11,8 +11,9 @@ import java.net.InetAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
+ /**
+ *  Esta classe é responsável por enviar uma mensagem para outra máquina da rede.
+ * 
  * @author douglas
  */
 public class EmissorUDP implements Runnable{
@@ -22,6 +23,7 @@ public class EmissorUDP implements Runnable{
     int porta = 0;
     String conteudo;
 
+  
     public EmissorUDP(String conteudo, InetAddress ip, int porta){
         count = 0;
         this.ip = ip;

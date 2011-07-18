@@ -26,8 +26,8 @@ import visual.SalaDeEspera;
  * 
  * @author AndreLuiz
  */
-public class StaticControlaJogador implements ActionListener{
-    
+public class StaticControlaJogador implements ActionListener {
+
     private static StaticControlaJogador controladorEstatico;
     private JanelaLogin jLogin;
     private String nick = "";
@@ -38,42 +38,43 @@ public class StaticControlaJogador implements ActionListener{
     private String IPdoServidor;
     private String meuIP;
     private ControlaPartida[] minhasPartidas;
- 
-    
-    private StaticControlaJogador(){
+
+    private StaticControlaJogador() {
         escuta = new Thread(new ReceporDeMensagensDoCliente());
         escuta.start();
         oponentes = new ArrayList<Jogador>();
-        
+
         inializaVetorDePartidas(10);
     }
-     /**
+
+    /**
      * Retorna uma instância do objeto estatico StaticControlaJogador
      * 
      * @return 
-     */   
-    public static StaticControlaJogador getInstance(){
-        
-        if( controladorEstatico == null)
-           controladorEstatico  = new StaticControlaJogador();
+     */
+    public static StaticControlaJogador getInstance() {
+
+        if (controladorEstatico == null) {
+            controladorEstatico = new StaticControlaJogador();
+        }
         return controladorEstatico;
-        
+
     }
-    
+
     /**
      *  Metodo que instancia a janela de login
      */
-    public synchronized void mostraJanelaDeLogin(){
+    public synchronized void mostraJanelaDeLogin() {
         jLogin = new JanelaLogin(this);
     }
-    
+
     /**
      * Método que instacia a janela da "sala de espera"
      */
-    public synchronized void chamaSalaDeEspera(){
+    public synchronized void chamaSalaDeEspera() {
         sala = new SalaDeEspera(this, oponentes);
     }
-    
+
     /**
      * Esse método limpa a lista local, isto é, apaga todos os elementos dela e a
      * seguir preenche-a armazenando os novos dados.
@@ -83,61 +84,59 @@ public class StaticControlaJogador implements ActionListener{
      * a um jogaodor.
      * 
      */
-    public synchronized void atualizaListaDeOponentes(String listaConcatenada){
-       
-       // if(oponentes != null)
-            //oponentes.clear(); // limpa a lista //
-        
+    public synchronized void atualizaListaDeOponentes(String listaConcatenada) {
+
+        // if(oponentes != null)
+        //oponentes.clear(); // limpa a lista //
+
         String[] aux = listaConcatenada.trim().split(","); // cada posição do vetor contém informação de um oponente //
 
-        for (int i = 1; i <= aux.length-1; i++) { // 0ª célula do vetor: lixo, 1ª célula: palavra de controle, 2ª célua: primeiro oponente //
+        for (int i = 1; i <= aux.length - 1; i++) { // 0ª célula do vetor: lixo, 1ª célula: palavra de controle, 2ª célua: primeiro oponente //
             String[] u = aux[i].split(":");
-                                  // Na ordem: u[1] == NICK, u[2] == IP, u[3] == PORTA, u[4] == STARUS e u[5] == PONTUACAO //
-            Jogador novoOponente = new Jogador(u[1], u[2], Integer.parseInt(u[3]), Integer.parseInt(u[4]), Integer.parseInt(u[5])); 
+            // Na ordem: u[1] == NICK, u[2] == IP, u[3] == PORTA, u[4] == STARUS e u[5] == PONTUACAO //
+            Jogador novoOponente = new Jogador(u[1], u[2], Integer.parseInt(u[3]), Integer.parseInt(u[4]), Integer.parseInt(u[5]));
             oponentes.add(novoOponente);
         }
-        
+
     }
-    
-    
+
     /**
      * Retorna um oponente da lista local mantida pelo cliente.
      * 
      * @param nick
      * @return 
      */
-    public synchronized Jogador retornaOponenteDaLista(String nick){
+    public synchronized Jogador retornaOponenteDaLista(String nick) {
         Jogador oponente = null;
 
-        for(int i=0; i<= oponentes.size(); i++){
-            if(oponentes.get(i).getNick().equalsIgnoreCase(nick) ){
+        for (int i = 0; i <= oponentes.size(); i++) {
+            if (oponentes.get(i).getNick().equalsIgnoreCase(nick)) {
                 oponente = oponentes.get(i);
                 break;
             }
         }
         return oponente;
     }
-    
+
     /**
      * Retorna o nick do jogador
      * @return 
      */
-    public synchronized String getNick(){
+    public synchronized String getNick() {
         return nick;
     }
-    
-    public synchronized String getIPdoServidor(){
+
+    public synchronized String getIPdoServidor() {
         return IPdoServidor;
     }
 
-    
     /**
      * Neste método é feita a indentificação e o tratamento inicial de todos os eventos 
      * gerados na interface gráfica do programa. A classe que faz o tratamento mais refinado é DecodificadorDeAcoesDoCliente.
      * 
      * @param e 
      */
-     public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
 
         nick = jLogin.getNick().getText();
 
@@ -146,9 +145,9 @@ public class StaticControlaJogador implements ActionListener{
             if (!nick.equalsIgnoreCase("") && nick.length() <= 8) {
 
                 jLogin.Visible(false);
-                
-                String controle = ":Login:"+ nick + ":"; // String de controle, indica qual ação deve ser executada pelo decodificador //
-                
+
+                String controle = ":Login:" + nick + ":"; // String de controle, indica qual ação deve ser executada pelo decodificador //
+
                 Thread loginNoServidor = new Thread(new DecodificadorDeAcoesDoCliente(controle));
                 loginNoServidor.start();
 
@@ -156,24 +155,24 @@ public class StaticControlaJogador implements ActionListener{
                 JOptionPane.showMessageDialog(null, "Seu nick deve conter de 1 a 8 caracteres", "Login Inválido", 0);
             }
 
-        }else if(e.getSource() == jLogin.getConfiguracao()) {
-            
+        } else if (e.getSource() == jLogin.getConfiguracao()) {
+
             IPdoServidor = JOptionPane.showInputDialog("Digite o IP do servidor: ");
             //System.out.println("IPdoServidor " + IPdoServidor);
             meuIP = JOptionPane.showInputDialog("Digite o IP do seu computador: ");
 
-                        
+
         } else if (e.getSource() == sala.getConvidar()) {
 
             if (sala.lista.getSelectedValue() != null) {
 
                 oponenteSelecionado = sala.lista.getSelectedValue().toString();
-                
-                String controle =  ":enviarConvite:" + oponenteSelecionado;
+
+                String controle = ":enviarConvite:" + oponenteSelecionado;
 
                 Thread convidarOponente = new Thread(new DecodificadorDeAcoesDoCliente(controle));
                 convidarOponente.start();
-                
+
 
             } else {
                 JOptionPane.showMessageDialog(null, "Selecione um oponente da lista e clique no botão para desafiá-lo \n"
@@ -182,27 +181,28 @@ public class StaticControlaJogador implements ActionListener{
 
         }
     }
-     /**
-      * Retorna o ip do jogador
-      * @return 
-      */
+
+    /**
+     * Retorna o ip do jogador
+     * @return 
+     */
     public String getMeuIP() {
         return meuIP;
     }
-    
+
     /**
      * Inicializa o vetor de partida do jogador
      * @param tamVetor 
      */
     private void inializaVetorDePartidas(int tamVetor) {
-       minhasPartidas  = new ControlaPartida[tamVetor];
-        
-       for(int i=0; i < minhasPartidas.length; i++){
-           minhasPartidas[i] = null;
-       }
-           
+        minhasPartidas = new ControlaPartida[tamVetor];
+
+        for (int i = 0; i < minhasPartidas.length; i++) {
+            minhasPartidas[i] = null;
+        }
+
     }
-    
+
     /**
      * Cria uma nova partida e adiciona no vetor de partidas do jogador.
      * 
@@ -210,16 +210,37 @@ public class StaticControlaJogador implements ActionListener{
      * @param ipOponente
      * @param euComeco 
      */
-    public void adicionaNovaPartida(String nickOponente, String ipOponente, boolean euComeco){
-        
+    public void adicionaNovaPartida(String nickOponente, String ipOponente, boolean euComeco) {
+
         ControlaPartida novaPartida = new ControlaPartida(nickOponente, ipOponente, euComeco);
-        
-        for(int i=0; i <= minhasPartidas.length; i++){
-            if(minhasPartidas[i] == null){
+
+        for (int i = 0; i <= minhasPartidas.length; i++) {
+            if (minhasPartidas[i] == null) {
                 minhasPartidas[i] = novaPartida;
+                if (euComeco) {
+                    JOptionPane.showMessageDialog(null, "Você é o jogador 1. \nFaça sua jogada", "Informação", 1);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Você é o jogador 2. \nAguarde sua rodada", "Informação", 1);
+                }
                 break;
             }
-       }
+        }
     }
-    
+
+    /**
+     * Atualiza uma partida com a informação do oponente
+     *
+     * @param nick
+     * @param coordenada
+     */
+    public void atualizaJanelaJogo(String nick, String coordenada) {
+
+        for (int i = 0; i <= minhasPartidas.length; i++) {
+            if (minhasPartidas[i].getNickOponente().equalsIgnoreCase(nick)) {
+                minhasPartidas[i].refresh(coordenada);
+                break;
+            }
+        }
+
+    }
 }
