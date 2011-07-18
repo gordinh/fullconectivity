@@ -19,7 +19,7 @@ import visual.JanelaJogo;
  * 
  * @author andre
  */
-public class ControlaPartida implements Observer  {
+public class ControlaPartida implements Observer {
 
     private JanelaJogo janela;
     private Matriz mat;
@@ -28,14 +28,13 @@ public class ControlaPartida implements Observer  {
     private String ipOponente;
     private boolean fimRodada;
     private boolean euComeco;
-    
 
     public ControlaPartida(String nick, String ip, boolean euComeco) {
-               
+
         this.nickOponente = nick;
         this.ipOponente = ip;
         this.euComeco = euComeco;
-        
+
         janela = new JanelaJogo(nickOponente, euComeco);
         janela.addObserver(this);
         janela.setText("Player 1 jogando...");
@@ -46,46 +45,64 @@ public class ControlaPartida implements Observer  {
 
     public void update(Observable o, Object arg) {
 
-       String ctrl = (String) arg;
+        String ctrl = (String) arg;
 
-       String controle = ":Jogada:" + StaticControlaJogador.getInstance().getNick() + ":" +ctrl;
+        String controle = ":Jogada:" + StaticControlaJogador.getInstance().getNick() + ":" + ctrl;
 
-       Thread enviaJogada;
+
         try {
-            enviaJogada = new Thread(new EmissorUDP(controle, InetAddress.getByName(ipOponente) , 9090));
+            Thread enviaJogada = new Thread(new EmissorUDP(controle, InetAddress.getByName(ipOponente), 9090));
             enviaJogada.start();
         } catch (UnknownHostException ex) {
             Logger.getLogger(ControlaPartida.class.getName()).log(Level.SEVERE, null, ex);
         }
-       
 
-       refresh(ctrl);
-     
+
+        refresh(ctrl);
+
     }
 
-    public void refresh(String coordenada){
+    /**
+     * Metodo que atualiza a janela de jogo a cada rodada.
+     *
+     * @param coordenada
+     */
+    public void refresh(String coordenada) {
 
         round++; // atualiza contador da partida
-        
+
         janela.setButtonIcon(round, coordenada); // atualiza a interface gráfica
 
         mat.atualizaMatriz(round, coordenada); // atualiza a matriz de dados
 
         int player = round % 2;
 
-        if (player == 0) {
+        // Atribui ou retira direito de jogar 
+        if (player == 0 && euComeco) {
             janela.setText("Player 1 jogando...");
-        } else {
+            janela.setEditFrame(true);
+        } else if (player == 0 && !euComeco) {
+            janela.setText("Player 1 jogando...");
+            janela.setEditFrame(false);
+        } else if (player != 0 && euComeco) {
             janela.setText("Player 2 jogando...");
+            janela.setEditFrame(false);
+        } else if (player != 0 && !euComeco) {
+            janela.setText("Player 2 jogando...");
+            janela.setEditFrame(true);
         }
 
-        janela.setEditFrame(false);
         testaVitoria();
     }
 
-    public void testaVitoria(){
+    /**
+     * Método que testa a vitória no jogo e caso haja informa ao 
+     * servidor para que sejam computados os novos valores de escore.
+     * 
+     */
+    public void testaVitoria() {
 
-        if (round >= 5) { 
+        if (round >= 5) {
             int win = mat.calculaVitoria();
 
             if (win == 3) {
@@ -101,11 +118,6 @@ public class ControlaPartida implements Observer  {
 
         }
     }
-
-
-
-
-
 
     public JanelaJogo getJanela() {
         return janela;
@@ -139,4 +151,7 @@ public class ControlaPartida implements Observer  {
         this.fimRodada = fimRodada;
     }
 
+    public String getNickOponente() {
+        return nickOponente;
+    }
 }

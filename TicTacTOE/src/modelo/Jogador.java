@@ -125,12 +125,12 @@ public class Jogador {
      * 
      * @param controle 
      */
-    public void setPontuacao(String controle) {
+    public void setPontuacao(String situacao) {
 
-        if (controle.equalsIgnoreCase("vitoria")) {
-            pontuacao = +2;
-        } else if (controle.equalsIgnoreCase("derrota")) {
-            pontuacao = -1;
+        if (situacao.equalsIgnoreCase("vitoria")) {
+            pontuacao =+2;
+        } else if (situacao.equalsIgnoreCase("derrota")) {
+            pontuacao =-1;
         }
 
     }

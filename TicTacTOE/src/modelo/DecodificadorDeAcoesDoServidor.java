@@ -46,9 +46,11 @@ public class DecodificadorDeAcoesDoServidor implements Runnable{
                 validaRecepção();
                 BancoOnlineDoServidor.getInstance().cadastroNaLista(split[2].trim(), split[3], receivePacket.getPort(), 1); // 1 = status online
                 retornaListaAoCliente(receivePacket, split[2]);
+            }else if (split[1].trim().equalsIgnoreCase("novoEscore")){
+                validaRecepção();
+                BancoOnlineDoServidor.getInstance().atualizaEscore(split[2], split[3]);
             }
-           // else if (split[1].trim().equalsIgnoreCase("Lista"))
-            //    retornaLista(receivePacket, split[1]);
+            
         
     }
     
