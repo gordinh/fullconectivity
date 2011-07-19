@@ -6,7 +6,6 @@
 package visual;
 
 
-import controle.ControlaJogador;
 import controle.StaticControlaJogador;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -114,6 +113,10 @@ public class SalaDeEspera {
     public JButton getConvidar(){
 
         return convidar;
+    }
+
+    public JButton getMensagem() {
+        return mensagem;
     }
 
 
