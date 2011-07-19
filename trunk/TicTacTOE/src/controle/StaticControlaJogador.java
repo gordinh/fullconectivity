@@ -174,6 +174,17 @@ public class StaticControlaJogador implements ActionListener {
                 convidarOponente.start();
 
 
+            } else if(e.getSource() == sala.getMensagem()) {
+
+                if (sala.lista.getSelectedValue() != null){
+
+                    oponenteSelecionado = sala.lista.getSelectedValue().toString();
+
+                    String controle = ":mensagem:" + oponenteSelecionado;
+                    Thread enviarMensagem = new Thread(new DecodificadorDeAcoesDoCliente(controle));
+                    enviarMensagem.start();
+                }
+
             } else {
                 JOptionPane.showMessageDialog(null, "Selecione um oponente da lista e clique no botão para desafiá-lo \n"
                         + "ou aguarde ser desafiado por outro jogador", "Erro", 0);
