@@ -174,15 +174,19 @@ public class StaticControlaJogador implements ActionListener {
                 convidarOponente.start();
 
 
-            } else if(e.getSource() == sala.getMensagem()) {
+        } else if(e.getSource() == sala.getMensagem()) {
 
-                if (sala.lista.getSelectedValue() != null){
+            if (sala.lista.getSelectedValue() != null){
 
-                    oponenteSelecionado = sala.lista.getSelectedValue().toString();
+                oponenteSelecionado = sala.lista.getSelectedValue().toString();
 
-                    String controle = ":mensagem:" + oponenteSelecionado;
-                    Thread enviarMensagem = new Thread(new DecodificadorDeAcoesDoCliente(controle));
-                    enviarMensagem.start();
+                String controle = ":EnviarMensagem:" + oponenteSelecionado;
+
+                Thread enviarMensagem = new Thread(new DecodificadorDeAcoesDoCliente(controle));
+                enviarMensagem.start();
+
+
+                
                 }
 
             } else {
