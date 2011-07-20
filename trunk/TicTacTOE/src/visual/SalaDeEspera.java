@@ -81,7 +81,8 @@ public class SalaDeEspera {
        mensagem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/visual/mensagem.png")));
        mensagem.setBounds(150, 380, 110, 90);
        mensagem.setToolTipText("Clique para enviar mensagem");
-       
+
+       mensagem.addActionListener(ctrl);
        
        info.setBounds(10, 300, 200, 70);
        infoMSG.setBounds(10, 400, 200, 70);

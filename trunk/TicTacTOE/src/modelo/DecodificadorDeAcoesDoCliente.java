@@ -73,6 +73,9 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
             } else if (split[1].equalsIgnoreCase("enviarConvite")) // ENVIAR CONVITE //
             {
                 desafiarOponente(split[2]); // NA POSIÇÃO 2 DEVE ESTAR O NICK DO ADVERSÁRIO //
+            } else if (split[1].equalsIgnoreCase("enviarMensagem"))
+            {
+                enviarMensagem(split[2]);
             }
 
         }
@@ -202,5 +205,37 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
         String[] split = sentencaMod.split(":");
 
         StaticControlaJogador.getInstance().atualizaJanelaJogo(split[2],split[3]);
+    }
+
+    /**
+     * Este método foi desenvolvido para que mensagens de chat fosse enviadas entres clientes
+     * @param nick
+     */
+    private void enviarMensagem(String nick) {
+
+        System.out.println("[metodo enviarMensagem] DecodificadorDeAcoesDoCliente diz, Vou enviar a mensagem de chat");
+
+        Jogador temp = StaticControlaJogador.getInstance().retornaOponenteDaLista(nick);
+
+        String ctrl = ":" + "TeDesafio:" + StaticControlaJogador.getInstance().getNick() + ":" + StaticControlaJogador.getInstance().getMeuIP();
+
+
+        if (temp.getStatus() == 1) {
+            try {
+
+                //InetAddress ip = InetAddress.getByName(temp.getIp());
+
+                Thread envioMensagem = new Thread(new EmissorUDP(ctrl, InetAddress.getByName(temp.getIp()), 9090));
+                envioMensagem.start();
+
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(DecodificadorDeAcoesDoCliente.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, nick + " está desconectado. \nVocê não pode "
+                    + "desafiar jogadores desconectados!", "Informação", 1);
+        }
+
+         System.out.println("[metodo enviarMensagem] DecodificadorDeAcoesDoCliente diz, Mensagem de chat enviada...");
     }
 }
