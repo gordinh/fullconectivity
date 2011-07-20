@@ -19,7 +19,35 @@ public class Jogador {
     private int porta;
     private int status;
     private int pontuacao;
+    private String senha;
 
+    /**
+     * Este construtor é deve ser usado apenas pelo servidor no ato do cadastro
+     * de um novo jogador.
+     * 
+     * @param nick
+     * @param senha
+     * @param addr 
+     */
+    public Jogador(String nick, String senha, String addr) {
+        this.nick = nick;
+        this.senha = senha;
+        this.strIP = addr;
+        this.porta = 9090;
+        this.status = 1;
+        this.pontuacao = 0;
+    }
+    
+    /**
+     * Este contrutor deve ser usado pela aplicação do cliente, quando tiver
+     * montando sua lista local de oponentes.
+     * 
+     * @param nick
+     * @param addr
+     * @param porta
+     * @param status
+     * @param pontuacao 
+     */
     public Jogador(String nick, String addr, int porta, int status, int pontuacao) {
         this.nick = nick;
         this.strIP = addr;
@@ -27,7 +55,7 @@ public class Jogador {
         this.status = status;
         this.pontuacao = pontuacao;
     }
-
+        
     public Jogador(String nick, InetAddress addr, int porta, int status) {
 
         this.nick = nick;
@@ -134,4 +162,25 @@ public class Jogador {
         }
 
     }
+
+    /**
+     * Retorna a senha de um objeto do tipo jogador.
+     * 
+     * @return 
+     */
+    public String getSenha() {
+        return senha;
+    }
+    
+    /**
+     * Configura a senha de um objeto do tipo jogador.
+     * 
+     * @param senha 
+     */
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+    
+    
+    
 }

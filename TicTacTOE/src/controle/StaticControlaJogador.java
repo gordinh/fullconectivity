@@ -31,6 +31,7 @@ public class StaticControlaJogador implements ActionListener {
     private static StaticControlaJogador controladorEstatico;
     private JanelaLogin jLogin;
     private String nick = "";
+    private String senha = "";
     private ArrayList<Jogador> oponentes;
     private SalaDeEspera sala = null;
     private String oponenteSelecionado;
@@ -139,14 +140,15 @@ public class StaticControlaJogador implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         nick = jLogin.getNick().getText();
+        senha = jLogin.getSenha().getText();
 
         if (e.getSource() == jLogin.getEnter()) {
 
             if (!nick.equalsIgnoreCase("") && nick.length() <= 8) {
 
-                jLogin.Visible(false);
+                //jLogin.visibilidadeDajanela(false);
 
-                String controle = ":Login:" + nick + ":"; // String de controle, indica qual ação deve ser executada pelo decodificador //
+                String controle = ":Login:" + nick + ":" + senha + ":" + meuIP; // String de controle, indica qual ação deve ser executada pelo decodificador //
 
                 Thread loginNoServidor = new Thread(new DecodificadorDeAcoesDoCliente(controle));
                 loginNoServidor.start();
@@ -160,9 +162,20 @@ public class StaticControlaJogador implements ActionListener {
             IPdoServidor = JOptionPane.showInputDialog("Digite o IP do servidor: ");
             //System.out.println("IPdoServidor " + IPdoServidor);
             meuIP = JOptionPane.showInputDialog("Digite o IP do seu computador: ");
-
-
-        } else if (e.getSource() == sala.getConvidar()) {
+        } else if(e.getSource() == jLogin.getCadastro()){
+            if(nick.equalsIgnoreCase("") || senha.equalsIgnoreCase("") || IPdoServidor.equalsIgnoreCase("") || meuIP.equalsIgnoreCase("")){
+                 
+                JOptionPane.showMessageDialog(null, "Para realizar cadastro preencha configure o ip do serivor, \n"
+                        + "e o seu ip. Preencha aos campos de usuário e senha. E clique em cadastro", "Erro", 0);
+            } else{
+                String strCrtl = ":Cadastro:" + nick + ":" + senha + ":" + meuIP +":" + IPdoServidor;
+                
+                Thread solicitaCadastro = new Thread(new DecodificadorDeAcoesDoCliente(strCrtl));
+                solicitaCadastro.start();
+            }
+            
+        }
+        else if (e.getSource() == sala.getConvidar()) {
 
             if (sala.lista.getSelectedValue() != null) {
 
@@ -257,5 +270,15 @@ public class StaticControlaJogador implements ActionListener {
             }
         }
 
+    }
+    
+    /**
+     * Esconde a janela de login, se o booleano passado como parametro for um false.
+     * Se for um true, a janela continua a ser exibida.
+     * 
+     * @param esconde 
+     */
+    public void escondeJanelaLogin(boolean esconde){
+       jLogin.visibilidadeDajanela(esconde);         
     }
 }

@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 /**
@@ -26,6 +27,8 @@ public class JanelaLogin {
     JTextField nick;
     JButton enter;
     JButton configuracao;
+    JButton cadastro;
+    JTextField senha;
 
     public JanelaLogin(StaticControlaJogador ctrl) {
         mostraJanela(ctrl);
@@ -63,6 +66,10 @@ public class JanelaLogin {
         this.panel = panel;
     }
     
+    public JTextField getSenha() {
+        return senha;
+    }
+    
 
 
     public void mostraJanela(StaticControlaJogador ctrlCLI){
@@ -71,9 +78,11 @@ public class JanelaLogin {
        frame = new JFrame("Jogo da Velha --Login");
        panel = new JPanel();
        logo = new JLabel();
-       nick = new JTextField();
+       nick = new JTextField("usuario");
        enter = new JButton("Entrar");
        configuracao = new JButton();
+       cadastro = new JButton("C");
+       senha = new JPasswordField("senha");
        
 
        //Amarrando os componentes
@@ -82,14 +91,16 @@ public class JanelaLogin {
        panel.add(nick);
        panel.add(enter);
        panel.add(configuracao);
+       panel.add(cadastro);
+       panel.add(senha); 
 
        //Propriedades da Janela
        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
        frame.setLocation(140, 90);
-       frame.setSize(305, 408);
+       frame.setSize(305, 508);
        frame.setVisible(true);
        frame.setResizable(false); //não maximiza a janela
-       panel.setSize(305, 408);
+       panel.setSize(305, 508);
        panel.setLayout(null);
        panel.setVisible(true);
        logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/visual/tictactoe.png")));
@@ -97,13 +108,16 @@ public class JanelaLogin {
        //Posicionamento dos Componentes
        logo.setBounds( 25, -35, 400, 330);
        nick.setBounds(100, 270, 100, 20);
-       enter.setBounds(110, 300, 85, 40);
-       configuracao.setBounds(230, 330, 48, 42);
+       senha.setBounds(100, 300, 100, 20);
+       enter.setBounds(110, 400, 85, 40);
+       configuracao.setBounds(230, 430, 48, 42);
        configuracao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/visual/Little-blue-gear-icon.png")));
+       cadastro.setBounds(10, 430, 48, 42);
 
        //Adicionando disparador de eventos (ouvinte)
        enter.addActionListener(ctrlCLI);
        configuracao.addActionListener(ctrlCLI);
+       cadastro.addActionListener(ctrlCLI);
        
     }
 
@@ -115,9 +129,16 @@ public class JanelaLogin {
         return enter;
     }    
 
-    public void Visible(boolean b){
+    /**
+     * Metedo que altera a visiblidade da janela de Login.
+     * Se o parametro, um booleano, for true a janela é exibida. 
+     * Se for false, a janela é escondida. 
+     * 
+     * @param simOUnao 
+     */
+    public void visibilidadeDajanela(boolean simOUnao){
         
-       frame.setVisible(b);
+       frame.setVisible(simOUnao);
     }
     
     /**
@@ -126,5 +147,9 @@ public class JanelaLogin {
      */
     public JButton getConfiguracao(){
         return configuracao;
+    }
+    
+    public JButton getCadastro(){
+        return cadastro;
     }
 }

@@ -96,7 +96,7 @@ public class ControlaPartida implements Observer {
     }
 
     /**
-     * Método que testa a vitória no jogo e caso haja informa ao 
+     * Método que testa o final de uma partida e caso haja informa ao 
      * servidor para que sejam computados os novos valores de escore.
      * 
      */
@@ -108,9 +108,51 @@ public class ControlaPartida implements Observer {
             if (win == 3) {
                 janela.setEditFrame(false);
                 janela.setText("Fim de Jogo: Player 1 Venceu!");
+                if (euComeco) {
+                    String control = ":novoEscore:" + StaticControlaJogador.getInstance().getNick() + ":" + "vitoria";
+
+                    try {
+                        Thread vitoria = new Thread(new EmissorUDP(control, InetAddress.getByName(StaticControlaJogador.getInstance().getIPdoServidor()), 2495));
+                        vitoria.start();
+                    } catch (UnknownHostException ex) {
+                        Logger.getLogger(ControlaPartida.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                } else {
+                    String control = ":novoEscore:" + StaticControlaJogador.getInstance().getNick() + ":" + "derrota";
+
+                    try {
+                        Thread derrota = new Thread(new EmissorUDP(control, InetAddress.getByName(StaticControlaJogador.getInstance().getIPdoServidor()), 2495));
+                        derrota.start();
+                    } catch (UnknownHostException ex) {
+                        Logger.getLogger(ControlaPartida.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
             } else if (win == 6) {
                 janela.setEditFrame(false);
                 janela.setText("Fim de Jogo: Player 2 Venceu!");
+                if (!euComeco) {
+                    String control = ":novoEscore:" + StaticControlaJogador.getInstance().getNick() + ":" + "vitoria";
+
+                    try {
+                        Thread vitoria = new Thread(new EmissorUDP(control, InetAddress.getByName(StaticControlaJogador.getInstance().getIPdoServidor()), 2495));
+                        vitoria.start();
+                    } catch (UnknownHostException ex) {
+                        Logger.getLogger(ControlaPartida.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                } else {
+                    String control = ":novoEscore:" + StaticControlaJogador.getInstance().getNick() + ":" + "derrota";
+
+                    try {
+                        Thread derrota = new Thread(new EmissorUDP(control, InetAddress.getByName(StaticControlaJogador.getInstance().getIPdoServidor()), 2495));
+                        derrota.start();
+                    } catch (UnknownHostException ex) {
+                        Logger.getLogger(ControlaPartida.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
             } else if (round >= 9) {
                 janela.setEditFrame(false);
                 janela.setText("Fim de Jogo: Empate");

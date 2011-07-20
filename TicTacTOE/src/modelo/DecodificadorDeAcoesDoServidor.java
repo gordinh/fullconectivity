@@ -6,7 +6,11 @@ package modelo;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Essa classe tem o objetivo de decodificar todas a mensagens que chegarem ao servidor.
@@ -42,13 +46,15 @@ public class DecodificadorDeAcoesDoServidor implements Runnable{
             String [] split = sentencaMod.split(":");
 
             
-            if(split[1].trim().equalsIgnoreCase("Login")){
+            if(split[1].trim().equalsIgnoreCase("novoCadastro")){
                 validaRecepção();
-                BancoOnlineDoServidor.getInstance().cadastroNaLista(split[2].trim(), split[3], receivePacket.getPort(), 1); // 1 = status online
-                retornaListaAoCliente(receivePacket, split[2]);
+                realizaCadastro(split[2], split[3], split[4]);
             }else if (split[1].trim().equalsIgnoreCase("novoEscore")){
                 validaRecepção();
                 BancoOnlineDoServidor.getInstance().atualizaEscore(split[2], split[3]);
+            } else if(split[1].trim().equalsIgnoreCase("Login")){
+                validaRecepção();
+                validaLogin(split[2],split[3],split[4]);
             }
             
         
@@ -70,15 +76,21 @@ public class DecodificadorDeAcoesDoServidor implements Runnable{
      * @param dp
      * @param nick
      */
-    public void retornaListaAoCliente(DatagramPacket dp, String nick){
+    public void retornaListaAoCliente(String ip , String nick){
 
            String lista = MontarStringJogadores(nick);
 
             System.out.println("\n [metodo retorna lista] DecodificadorDeAcoesDoServidor diz: lista montada: " + lista);
 
             System.out.println("\n [metodo retorna lista] DecodificadorDeAcoesDoServidor diz: vou retornar a lista para " + nick);
-            Thread enviaLista = new Thread(new EmissorUDP(lista, dp.getAddress(), 9090));
-            enviaLista.start();
+             
+        try {
+           Thread enviaLista = new Thread(new EmissorUDP(lista, InetAddress.getByName(ip), 9090));
+           enviaLista.start();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
             System.out.println(" \n [metodo retorna lista] DecodificadorDeAcoesDoServidor diz: Já chamei o EmissorUDP,"
                     + " em instantes ele executará e fará a entrega e confirmação da entrega");
 
@@ -112,6 +124,62 @@ public class DecodificadorDeAcoesDoServidor implements Runnable{
         }
 
         return s;
+    }
+    
+    /**
+     * Faz a verificação de usuário e senha no "banco" do servidor e responde ao 
+     * usuário do programa se o dados informados são válidos ou não. Se as informações do usuário
+     * estiverem corretas, o este método já chama o método que retorna a lista para o usuário.
+     * 
+     * @param nick
+     * @param senha
+     * @param ip 
+     */
+    public void validaLogin(String nick, String senha, String ip) {
+        
+        boolean valido = BancoOnlineDoServidor.getInstance().fazerLogin(nick, senha);
+        
+        Thread respostaLogin;
+        if(valido){
+            String contole = ":RespostaLogin:Valido";
+            try {
+                respostaLogin = new Thread(new EmissorUDP(contole, InetAddress.getByName(ip), 9090));
+                respostaLogin.start();
+                retornaListaAoCliente(ip, nick);
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            String contole = ":RespostaLogin:Invalido";
+            try {
+                respostaLogin = new Thread(new EmissorUDP(contole, InetAddress.getByName(ip), 9090));
+                respostaLogin.start();
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+    }
+    
+    /**
+     * Este método cadastra um novo jogador no "banco" do servidor e informa 
+     * ao usuário se o cadastro foi bem sucedido.
+     * 
+     * @param nick
+     * @param senha
+     * @param ip 
+     */
+    public void realizaCadastro(String nick, String senha, String ip){
+        
+        BancoOnlineDoServidor.getInstance().cadastroNaLista(nick, senha, ip);
+        
+        try {
+            Thread cadastroRealizado = new Thread(new EmissorUDP(":CadastroRealizadoComSucesso", InetAddress.getByName(ip),9090));
+            cadastroRealizado.start();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+                
     }
     
 }

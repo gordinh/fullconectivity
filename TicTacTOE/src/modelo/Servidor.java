@@ -8,8 +8,6 @@ package modelo;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,7 +29,7 @@ public class Servidor implements Runnable{
     public Servidor(){
         // Para fins de teste. Não manter a lista vazia.
     
-            BancoOnlineDoServidor.getInstance().cadastroNaLista("fixo","192.168.0.0", 8080, 0);
+            BancoOnlineDoServidor.getInstance().cadastroNaLista("fixo","192.168.0.0","8080");
         
     }
 
