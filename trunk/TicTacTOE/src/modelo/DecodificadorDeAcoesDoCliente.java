@@ -58,10 +58,8 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
                 oponenteAceitouDesafio(sentencaMod);
             } else if (split[1].equalsIgnoreCase("Jogada")) {
                 jogadaDoOponente(sentencaMod);
-            } else if (split[1].equalsIgnoreCase("RespostaLogin")){
-                confirmacaoDoLogin(split[2]);
-            } else if (split[1].equalsIgnoreCase("CadastroRealizadoComSucesso")){
-                confirmacaoDoCadastro();
+            } else if(split[1].equalsIgnoreCase("receberMsgChat")){
+                enviarMsgChat(sentencaMod);
             }
 
 
@@ -74,8 +72,8 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
             if (split[1].equalsIgnoreCase("Login")) // FAZER LOGIN //
             {
                 efetuarLogin(split[2], split[3]);
-            } else if (split[1].equalsIgnoreCase("enviarConvite")) // ENVIAR CONVITE //
-            {
+            } else if (split[1].equalsIgnoreCase("enviarConvite")){ // ENVIAR CONVITE //
+            
                 desafiarOponente(split[2]); // NA POSIÇÃO 2 DEVE ESTAR O NICK DO ADVERSÁRIO //
             }else if (split[1].equalsIgnoreCase("Cadastro")) // ENVIAR CONVITE //
             {
@@ -117,7 +115,7 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
     public void confirmacaoDoLogin(String validade) {
 
         if (validade.equalsIgnoreCase("Valido")) {
-            StaticControlaJogador.getInstance().escondeJanelaLogin(false);
+            //StaticControlaJogador.getInstance().e
         } else if (validade.equalsIgnoreCase("Invalido")) {
             JOptionPane.showMessageDialog(null, "Seu usuário ou senha nao estão corretos."
                     + "\n  Tente Novamente", "Login Inválido", 0);
@@ -248,5 +246,13 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
         } catch (UnknownHostException ex) {
             Logger.getLogger(DecodificadorDeAcoesDoCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+         System.out.println("[metodo enviarMensagemChat] DecodificadorDeAcoesDoCliente diz, Mensagem de chat enviada...");
+    }
+
+    private void enviarMsgChat(String sentencaMod) {
+        String[] split = sentencaMod.split(":");
+
+        StaticControlaJogador.getInstance().atualizaJanelaChat(split[2], split[3]);
     }
 }

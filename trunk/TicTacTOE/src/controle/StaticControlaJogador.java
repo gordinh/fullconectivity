@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import modelo.DecodificadorDeAcoesDoCliente;
 import modelo.Jogador;
 import modelo.ReceporDeMensagensDoCliente;
+import visual.JanelaChat;
 import visual.JanelaLogin;
 import visual.SalaDeEspera;
 
@@ -39,13 +40,15 @@ public class StaticControlaJogador implements ActionListener {
     private String IPdoServidor;
     private String meuIP;
     private ControlaPartida[] minhasPartidas;
+    private JanelaChat[] meusChats;
+
 
     private StaticControlaJogador() {
         escuta = new Thread(new ReceporDeMensagensDoCliente());
         escuta.start();
         oponentes = new ArrayList<Jogador>();
 
-        inializaVetorDePartidas(10);
+        inicializaVetorDePartidasEchat(10);
     }
 
     /**
@@ -94,7 +97,7 @@ public class StaticControlaJogador implements ActionListener {
 
         for (int i = 1; i <= aux.length - 1; i++) { // 0ª célula do vetor: lixo, 1ª célula: palavra de controle, 2ª célua: primeiro oponente //
             String[] u = aux[i].split(":");
-            // Na ordem: u[1] == NICK, u[2] == IP, u[3] == PORTA, u[4] == STARUS e u[5] == PONTUACAO //
+            // Na ordem: u[1] == NICK, u[2] == IP, u[3] == PORTA, u[4] == STATUS e u[5] == PONTUACAO //
             Jogador novoOponente = new Jogador(u[1], u[2], Integer.parseInt(u[3]), Integer.parseInt(u[4]), Integer.parseInt(u[5]));
             oponentes.add(novoOponente);
         }
@@ -193,12 +196,10 @@ public class StaticControlaJogador implements ActionListener {
 
                 oponenteSelecionado = sala.lista.getSelectedValue().toString();
 
-                String controle = ":EnviarMensagem:" + oponenteSelecionado;
+                String controle = ":ReceberMsgChat:" + oponenteSelecionado;
 
                 Thread enviarMensagem = new Thread(new DecodificadorDeAcoesDoCliente(controle));
                 enviarMensagem.start();
-
-
                 
                 }
 
@@ -222,12 +223,15 @@ public class StaticControlaJogador implements ActionListener {
      * Inicializa o vetor de partida do jogador
      * @param tamVetor 
      */
-    private void inializaVetorDePartidas(int tamVetor) {
+    private void inicializaVetorDePartidasEchat(int tamVetor) {
         minhasPartidas = new ControlaPartida[tamVetor];
+        meusChats = new JanelaChat[tamVetor];
 
         for (int i = 0; i < minhasPartidas.length; i++) {
             minhasPartidas[i] = null;
+            meusChats[i] = null;
         }
+
 
     }
 
@@ -271,14 +275,8 @@ public class StaticControlaJogador implements ActionListener {
         }
 
     }
-    
-    /**
-     * Esconde a janela de login, se o booleano passado como parametro for um false.
-     * Se for um true, a janela continua a ser exibida.
-     * 
-     * @param esconde 
-     */
-    public void escondeJanelaLogin(boolean esconde){
-       jLogin.visibilidadeDajanela(esconde);         
+
+    public void atualizaJanelaChat(String nick, String msg){
+        
     }
 }

@@ -20,7 +20,7 @@ public class SalaDeEspera {
 
     JFrame frame;
     JPanel panel;
-   public JList lista;
+    public JList lista;
     DefaultListModel itens;
     private ArrayList<Jogador> clientes;
     public JScrollPane scrollpane;

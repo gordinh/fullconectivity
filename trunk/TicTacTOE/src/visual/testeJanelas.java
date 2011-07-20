@@ -18,7 +18,7 @@ public class testeJanelas {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        JanelaChat jc = new JanelaChat(StaticControlaJogador.getInstance());
+        JanelaChat jc = new JanelaChat(StaticControlaJogador.getInstance(), "Ninguem");
         jc.Visible(true);
     }
 
