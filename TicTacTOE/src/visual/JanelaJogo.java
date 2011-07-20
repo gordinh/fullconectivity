@@ -30,9 +30,7 @@ public class JanelaJogo extends Observable {
     JTextArea text;
     private String barraDeTitulo;
     
-    public JanelaJogo(String nick, boolean euComeco) {
-        
-        //barraDeTitulo = "Jogo da Velha - Partida contra: " + nick ;
+    public JanelaJogo(String nick, boolean euComeco) {        
         
         mostraJanela(barraDeTitulo = "Jogo da Velha - Partida contra: " + nick);
         setEditFrame(euComeco);

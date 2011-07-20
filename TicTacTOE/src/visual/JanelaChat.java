@@ -22,15 +22,17 @@ public class JanelaChat {
     JTextField historico;
     JTextField mensagem;
     JButton send;
+    private String barraDeTitulo;
 
-    public JanelaChat(StaticControlaJogador ctrl) {
+    public JanelaChat(StaticControlaJogador ctrl, String nick) {
+        barraDeTitulo = "Jogo da Velha - Partida contra: " + nick;
         mostraJanela(ctrl);
     }
 
-    public void mostraJanela(StaticControlaJogador ctrlCLI){
+    public void mostraJanela(StaticControlaJogador ctrlCli){
 
        // Instaciação dos componentes
-       frame = new JFrame("Jogo da Velha --Chat");
+       frame = new JFrame(barraDeTitulo);
        panel = new JPanel();
        historico = new JTextField();
        mensagem = new JTextField();
@@ -61,7 +63,7 @@ public class JanelaChat {
        send.setBounds(110, 295, 80, 20);
 
        //Adicionando disparador de eventos (ouvinte)
-       send.addActionListener(ctrlCLI);
+       send.addActionListener(ctrlCli);
 
     }
 
