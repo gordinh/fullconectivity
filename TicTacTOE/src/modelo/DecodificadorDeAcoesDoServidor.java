@@ -64,7 +64,9 @@ public class DecodificadorDeAcoesDoServidor implements Runnable{
      *  Avisa ao cliente que sua mensagem chegou
      */
     public void validaRecepção(){
-       
+            
+            System.out.println("Validando para ip: " + receivePacket.getAddress() + " e porta: " + receivePacket.getPort());
+        
             Thread valida = new Thread(new EmissorUDP(":ok", receivePacket.getAddress(), receivePacket.getPort()));
             valida.start();
     }
@@ -142,13 +144,13 @@ public class DecodificadorDeAcoesDoServidor implements Runnable{
         Thread respostaLogin;
         if(valido){
             String contole = ":RespostaLogin:Valido";
-            try {
-                respostaLogin = new Thread(new EmissorUDP(contole, InetAddress.getByName(ip), 9090));
+            //try {
+                respostaLogin = new Thread(new EmissorUDP(contole, receivePacket.getAddress(), 9090)); //InetAddress.getByName(ip)
                 respostaLogin.start();
                 retornaListaAoCliente(ip, nick);
-            } catch (UnknownHostException ex) {
+            /*} catch (UnknownHostException ex) {
                 Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            }*/
         } else {
             String contole = ":RespostaLogin:Invalido";
             try {

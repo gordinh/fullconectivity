@@ -4,6 +4,7 @@
  */
 package modelo;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 
 /**
@@ -11,7 +12,7 @@ import java.net.InetAddress;
  * 
  * @author douglas
  */
-public class Jogador {
+public class Jogador implements Serializable{
 
     private String nick;
     private String strIP;

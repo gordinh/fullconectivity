@@ -29,7 +29,7 @@ public class Servidor implements Runnable{
     public Servidor(){
         // Para fins de teste. Não manter a lista vazia.
     
-            BancoOnlineDoServidor.getInstance().cadastroNaLista("fixo","192.168.0.0","8080");
+//BancoOnlineDoServidor.getInstance().cadastroNaLista("fixo","192.168.0.0","8080");
         
     }
 
