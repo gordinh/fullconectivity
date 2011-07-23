@@ -20,8 +20,8 @@ public class Main {
         // TODO code application logic here
 
         StaticControlaJogador.getInstance().mostraJanelaDeLogin();
+       
         
-
     }
 
 }

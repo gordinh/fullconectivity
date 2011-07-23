@@ -4,12 +4,23 @@
  */
 package modelo;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  * Esta classe se baseia no padrão de projeto SingleTon, e visa concentrar todas as informações do servidor.
  * A ideia principal é facilitar o gerenciamento de recurusos, uma vez que seus métodos e/ou blocos considerados críticos
- * serão syncronized.
+ * serão syncronized. Para fins de armazenamento dos dados cadastrais o ArrayList de jogadores será serializado cada vez
+ * que uma nova informação for adicionada ao array.
  * 
  * @author AndreLuiz
  */
@@ -20,9 +31,16 @@ public class BancoOnlineDoServidor {
 
     private BancoOnlineDoServidor() {
 
-        // Colocar o banco pra carregar as informações de um arquivo de dados.
 
-        jogadoresCadastrados = new ArrayList<Jogador>(); // iniciar lista de jogadores cadastrados.
+
+        // Colocar o banco pra carregar as informações de um arquivo de dados.
+        if (recuperaListaSerializada() != null) {
+            jogadoresCadastrados = recuperaListaSerializada();
+            System.out.println("[ metodo contrutor] BancoOnlineDoServidor diz: Recuperei a lista do arquivo");
+        } else {
+            jogadoresCadastrados = new ArrayList<Jogador>(); // iniciar lista de jogadores cadastrados.
+            System.out.println("[ metodo contrutor] BancoOnlineDoServidor diz: Não existia lista no arquivo. ");
+        }
     }
 
     /**
@@ -53,6 +71,7 @@ public class BancoOnlineDoServidor {
 
         synchronized (jogadoresCadastrados) {
             jogadoresCadastrados.add(novo);
+            serializaLista(); // Salva a nova lista em arquivo
         }
 
         int tamanhoDaLista = jogadoresCadastrados.size();
@@ -126,7 +145,59 @@ public class BancoOnlineDoServidor {
                 }
             }
 
+            serializaLista();
         }
 
+    }
+
+    /**
+     * 
+     * Este método serializa a lista de jogadores cadastrados na pasta onde
+     * o projeto está salvo.
+     * 
+     */
+    public void serializaLista() {
+        ObjectOutputStream salvaEmarquivo;
+        try {
+            salvaEmarquivo = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") + File.separator + "Lista.bin"));
+            //                            out = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") + File.separator + "Lista.bin"));
+            salvaEmarquivo.writeObject(jogadoresCadastrados);
+            salvaEmarquivo.flush();
+            salvaEmarquivo.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Não foi possível salvar a lista", "Erro", 0);
+        }
+
+
+    }
+
+    /**
+     * Este método recupera lista de jogadores cadastrados salva previamente
+     * na pasta do projeto TicTacTOE.
+     */
+    public ArrayList<Jogador> recuperaListaSerializada() {
+
+        ArrayList<Jogador> temp = null;
+
+        ObjectInputStream recuperaDoArquivo;
+
+        try {
+
+            recuperaDoArquivo = new ObjectInputStream(new FileInputStream(System.getProperty("user.dir") + File.separator + "Lista.bin"));
+
+            try {
+
+                temp = (ArrayList<Jogador>) recuperaDoArquivo.readObject();
+                recuperaDoArquivo.close();
+
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(BancoOnlineDoServidor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(BancoOnlineDoServidor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return temp;
     }
 }
