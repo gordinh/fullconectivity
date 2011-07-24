@@ -147,7 +147,7 @@ public class StaticControlaJogador implements ActionListener {
 
         if (e.getSource() == jLogin.getEnter()) {
 
-            if (!nick.equalsIgnoreCase("") && nick.length() <= 8) {
+            if (!nick.equalsIgnoreCase("") && nick.length() <= 8 && !senha.equalsIgnoreCase("")) {
 
                 //jLogin.visibilidadeDajanela(false);
 
@@ -157,7 +157,11 @@ public class StaticControlaJogador implements ActionListener {
                 loginNoServidor.start();
 
             } else {
-                JOptionPane.showMessageDialog(null, "Seu nick deve conter de 1 a 8 caracteres", "Login Inválido", 0);
+                JOptionPane.showMessageDialog(null, "Um erro foi encontrado no procimento de login."
+                                              + "\n Verifique as seguites opções: \n "
+                                              + "\n * O campo nick não está vazio e tem menos que 8 caracteres; "
+                                              + "\n * O campo de senha não está vazio; "
+                                              + "\n * As configurações (IPs) foram armazenados (esse item é temporário);", "Erro", 0);
             }
 
         } else if (e.getSource() == jLogin.getConfiguracao()) {
@@ -165,20 +169,22 @@ public class StaticControlaJogador implements ActionListener {
             IPdoServidor = JOptionPane.showInputDialog("Digite o IP do servidor: ");
             //System.out.println("IPdoServidor " + IPdoServidor);
             meuIP = JOptionPane.showInputDialog("Digite o IP do seu computador: ");
-        } else if(e.getSource() == jLogin.getCadastro()){
-            if(nick.equalsIgnoreCase("") || senha.equalsIgnoreCase("") || IPdoServidor.equalsIgnoreCase("") || meuIP.equalsIgnoreCase("")){
-                 
-                JOptionPane.showMessageDialog(null, "Para realizar cadastro preencha configure o ip do serivor, \n"
-                        + "e o seu ip. Preencha aos campos de usuário e senha. E clique em cadastro", "Erro", 0);
-            } else{
-                String strCrtl = ":Cadastro:" + nick + ":" + senha + ":" + meuIP +":" + IPdoServidor;
-                
+        } else if (e.getSource() == jLogin.getCadastro()) {
+
+            if (!nick.equalsIgnoreCase("") || nick.length() <= 8 || !senha.equalsIgnoreCase("") || !IPdoServidor.equalsIgnoreCase("") || !meuIP.equalsIgnoreCase("")) {
+                JOptionPane.showMessageDialog(null, "Um erro foi encontrado no procimento de cadastro."
+                                              + "\n Verifique as seguites opções: \n "
+                                              + "\n * O campo nick não está vazio e tem menos que 8 caracteres; "
+                                              + "\n * O campo de senha não está vazio; "
+                                              + "\n * As configurações (IPs) foram armazenados (esse item é temporário);", "Erro", 0);
+            } else {
+                String strCrtl = ":Cadastro:" + nick + ":" + senha + ":" + meuIP + ":" + IPdoServidor;
+
                 Thread solicitaCadastro = new Thread(new DecodificadorDeAcoesDoCliente(strCrtl));
                 solicitaCadastro.start();
             }
-            
-        }
-        else if (e.getSource() == sala.getConvidar()) {
+
+        } else if (e.getSource() == sala.getConvidar()) {
 
             if (sala.lista.getSelectedValue() != null) {
 
@@ -190,17 +196,17 @@ public class StaticControlaJogador implements ActionListener {
                 convidarOponente.start();
 
 
-        } else if(e.getSource() == sala.getMensagem()) {
+            } else if (e.getSource() == sala.getMensagem()) {
 
-            if (sala.lista.getSelectedValue() != null){
+                if (sala.lista.getSelectedValue() != null) {
 
-                oponenteSelecionado = sala.lista.getSelectedValue().toString();
+                    oponenteSelecionado = sala.lista.getSelectedValue().toString();
 
-                String controle = ":ReceberMsgChat:" + oponenteSelecionado;
+                    String controle = ":EnviarMensagem:" + oponenteSelecionado;
 
-                Thread enviarMensagem = new Thread(new DecodificadorDeAcoesDoCliente(controle));
-                enviarMensagem.start();
-                
+                    Thread enviarMensagem = new Thread(new DecodificadorDeAcoesDoCliente(controle));
+                    enviarMensagem.start();
+
                 }
 
             } else {
@@ -276,7 +282,13 @@ public class StaticControlaJogador implements ActionListener {
 
     }
 
-    public void atualizaJanelaChat(String nick, String msg){
-        
+    /**
+     * Esconde a janela de login, se o booleano passado como parametro for um false.
+     * Se for um true, a janela continua a ser exibida.
+     * 
+     * @param esconde 
+     */
+    public void escondeJanelaLogin(boolean esconde) {
+        jLogin.visibilidadeDajanela(esconde);
     }
 }

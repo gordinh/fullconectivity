@@ -58,8 +58,12 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
                 oponenteAceitouDesafio(sentencaMod);
             } else if (split[1].equalsIgnoreCase("Jogada")) {
                 jogadaDoOponente(sentencaMod);
-            } else if(split[1].equalsIgnoreCase("receberMsgChat")){
-                enviarMsgChat(sentencaMod);
+            } else if (split[1].equalsIgnoreCase("RespostaLogin")){
+                confirmacaoDoLogin(split[2]);
+            } else if (split[1].equalsIgnoreCase("CadastroRealizadoComSucesso")){
+                confirmacaoDoCadastro(1);
+            }else if (split[1].equalsIgnoreCase("loginInvalido")){
+                confirmacaoDoCadastro(0);
             }
 
 
@@ -125,13 +129,17 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
     
     /**
      * Este método trata a resposta do servidor quanto a solicitação de cadastro do usuário.
-     * O metodo deve informar ao usuário se o cadastro foi realizado com sucesso ou não.
+     * O metodo deve informar visualmente ao usuário se o cadastro foi realizado com sucesso ou não.
+     * O parametro inteiro indica se o cadastro foi bem sucedido ou não. Se validade for zero o cadastro
+     * não foi realizado, ao passo que se for 1, foi realizado.
      * 
-     * 
+     * @param validacao 
      */
-    public void confirmacaoDoCadastro() {
-            
-            JOptionPane.showMessageDialog(null, "Cadastro Realizado Com Sucesso", "Login Inválido", 0);
+    public void confirmacaoDoCadastro(int validacao) {
+            if(validacao == 0){
+            JOptionPane.showMessageDialog(null, "Este nick já existe. Tente outro!", "Nick Inválido", 0);}
+            else if(validacao == 1){
+            JOptionPane.showMessageDialog(null, "Cadastro Realizado Com Sucesso", "Jogador Cadastrado", 1);} 
 
     }
     
@@ -253,6 +261,5 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
     private void enviarMsgChat(String sentencaMod) {
         String[] split = sentencaMod.split(":");
 
-        StaticControlaJogador.getInstance().atualizaJanelaChat(split[2], split[3]);
     }
 }
