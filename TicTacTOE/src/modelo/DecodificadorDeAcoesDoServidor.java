@@ -173,14 +173,20 @@ public class DecodificadorDeAcoesDoServidor implements Runnable{
      */
     public void realizaCadastro(String nick, String senha, String ip){
         
-        BancoOnlineDoServidor.getInstance().cadastroNaLista(nick, senha, ip);
+        boolean cadastroFeito = BancoOnlineDoServidor.getInstance().cadastroNaLista(nick, senha, ip);
         
+        if (cadastroFeito){
         try {
             Thread cadastroRealizado = new Thread(new EmissorUDP(":CadastroRealizadoComSucesso", InetAddress.getByName(ip),9090));
             cadastroRealizado.start();
         } catch (UnknownHostException ex) {
             Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }} else {try {
+            Thread loginInvalido = new Thread(new EmissorUDP(":LoginInvalido", InetAddress.getByName(ip),9090));
+            loginInvalido.start();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);
+        }}
                 
     }
     

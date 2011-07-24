@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -62,11 +61,23 @@ public class BancoOnlineDoServidor {
      * @param nick
      * @param senha
      * @param addr 
+     * @return cadastrado
      */
-    public void cadastroNaLista(String nick, String senha, String addr) {
+    public boolean cadastroNaLista(String nick, String senha, String addr) {
 
-        System.out.println("\n [metodo cadastro na lista] BancoOnlineDoServidor diz: cadastrando " + nick + " na lista");
+        boolean jaCadastrado = false;
+        boolean retorno = false;
+        
+        // laço para verificar a duplicidade de nick
+        for(int i=0; i < jogadoresCadastrados.size(); i++){
+            if(jogadoresCadastrados.get(i).getNick().equalsIgnoreCase(nick)){
+               // System.out.println("\n nick procurado é: " + nick + "\n nick atual da lista é: " + jogadoresCadastrados.get(i).getNick());
+                jaCadastrado = true;}
+        }
 
+        // Se ja cadastrado continuar false é sinal de que não existia outro nick igual
+        if(jaCadastrado == false){
+        
         Jogador novo = new Jogador(nick, senha, addr);
 
         synchronized (jogadoresCadastrados) {
@@ -78,7 +89,9 @@ public class BancoOnlineDoServidor {
 
         System.out.println("\n [metodo cadastro na lista] BancoOnlineDoServidor diz:" + jogadoresCadastrados.get(tamanhoDaLista - 1).getNick() + " está cadastrado!");
 
-        //retornaLista(receivePacket, nick);
+        retorno = true;
+        }
+        return retorno;
     }
 
     /**
@@ -201,3 +214,4 @@ public class BancoOnlineDoServidor {
         return temp;
     }
 }
+    
