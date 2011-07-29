@@ -48,8 +48,8 @@ public class StaticControlaJogador implements ActionListener {
         oponentes = new ArrayList<Jogador>();
         MeuNick = "";
         senha = "";
-        IPdoServidor = "10.65.102.107";
-        meuIP = "10.65.102.107";
+        IPdoServidor = "10.65.97.62";
+        meuIP = "10.65.97.37";
 
         inicializaVetorDePartidasEchat(10);
     }
@@ -79,7 +79,11 @@ public class StaticControlaJogador implements ActionListener {
      * Método que instacia a janela da "sala de espera"
      */
     public synchronized void chamaSalaDeEspera() {
-        sala = new SalaDeEspera(this, oponentes);
+        if (sala == null) {
+            sala = new SalaDeEspera(this, oponentes);
+        } else {
+            sala.MontarListaDeConectados(oponentes);
+        }
     }
 
     /**
@@ -93,16 +97,18 @@ public class StaticControlaJogador implements ActionListener {
      */
     public synchronized void atualizaListaDeOponentes(String listaConcatenada) {
 
-        // if(oponentes != null)
-        //oponentes.clear(); // limpa a lista //
-
+        if (!oponentes.isEmpty()) {
+            oponentes.clear(); // limpa a lista //
+        }
         String[] aux = listaConcatenada.trim().split(","); // cada posição do vetor contém informação de um oponente //
 
         for (int i = 1; i <= aux.length - 1; i++) { // 0ª célula do vetor: lixo, 1ª célula: palavra de controle, 2ª célua: primeiro oponente //
             String[] u = aux[i].split(":");
             // Na ordem: u[1] == NICK, u[2] == IP, u[3] == PORTA, u[4] == STATUS e u[5] == PONTUACAO //
-            Jogador novoOponente = new Jogador(u[1], u[2], Integer.parseInt(u[3]), Integer.parseInt(u[4]), Integer.parseInt(u[5]));
-            oponentes.add(novoOponente);
+            if (!u[1].equalsIgnoreCase(MeuNick)) {
+                Jogador novoOponente = new Jogador(u[1], u[2], Integer.parseInt(u[3]));
+                oponentes.add(novoOponente);
+            }
         }
 
     }
