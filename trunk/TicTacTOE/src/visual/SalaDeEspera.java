@@ -93,8 +93,8 @@ public class SalaDeEspera {
     }
 
     /**
-     *
-     * Método para preencher a lista de conectados
+     * Método para preencher a lista de conectados.
+     * Esta versão do método é usado quando a janela da sala de espera é instanciada.
      */
     public void MontarListaDeConectados() {
 
@@ -106,6 +106,23 @@ public class SalaDeEspera {
                 clientes.get(i).setNick(clientes.get(i).getNick().concat("-> OFF"));
             }
             itens.addElement(clientes.get(i).getNick());
+        }
+    }
+
+    /**
+     * Método para preencher a lista de conectados.
+     * Esta versão do método é usado quando a janela da sala de espera é atualizada.
+     */
+    public void MontarListaDeConectados(ArrayList<Jogador> conectados) {
+
+        itens = new DefaultListModel();
+        for (int i = 0; i < conectados.size(); i++) {
+            if (conectados.get(i).getStatus() == 1) {
+                conectados.get(i).setNick(conectados.get(i).getNick().concat("-> ON"));
+            } else {
+                conectados.get(i).setNick(conectados.get(i).getNick().concat("-> OFF"));
+            }
+            itens.addElement(conectados.get(i).getNick());
         }
     }
 

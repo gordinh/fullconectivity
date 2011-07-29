@@ -121,10 +121,9 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
         // Ex.: João:10.65.99.33:5000, Douglas|10.65.128.75|2495, etc...
 
         for (int i = 0; i < listaDeRetorno.size(); i++) {
-            if (!listaDeRetorno.get(i).getNick().equalsIgnoreCase(nick)) {
-                s = s + ":" + (listaDeRetorno.get(i).getNick()) + ":" + listaDeRetorno.get(i).getIp() + ":" + listaDeRetorno.get(i).getPorta() + ":"
-                        + listaDeRetorno.get(i).getStatus() + ":" + listaDeRetorno.get(i).getPontuacao() + ",";
-            }
+           // if (!listaDeRetorno.get(i).getNick().equalsIgnoreCase(nick)) {
+                s = s + ":" + (listaDeRetorno.get(i).getNick()) + ":" + listaDeRetorno.get(i).getIp() + ":" + listaDeRetorno.get(i).getStatus() +  ",";
+            //}
 
         }
 
@@ -150,7 +149,7 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
             //try {
             respostaLogin = new Thread(new EmissorUDP(contole, receivePacket.getAddress(), 9090)); //InetAddress.getByName(ip)
             respostaLogin.start();
-            retornaListaAoCliente(ip, nick);
+            retornaListaAoCliente("10.65.103.255", nick);
             /*} catch (UnknownHostException ex) {
             Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);
             }*/

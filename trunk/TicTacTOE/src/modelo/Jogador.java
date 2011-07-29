@@ -35,7 +35,7 @@ public class Jogador implements Serializable{
         this.senha = senha;
         this.strIP = addr;
         this.porta = 9090;
-        this.status = 1;
+        this.status = 0;
         this.pontuacao = 0;
     }
     
@@ -49,12 +49,10 @@ public class Jogador implements Serializable{
      * @param status
      * @param pontuacao 
      */
-    public Jogador(String nick, String addr, int porta, int status, int pontuacao) {
+    public Jogador(String nick, String addr, int status) {
         this.nick = nick;
         this.strIP = addr;
-        this.porta = porta;
         this.status = status;
-        this.pontuacao = pontuacao;
     }
         
     public Jogador(String nick, InetAddress addr, int porta, int status) {
