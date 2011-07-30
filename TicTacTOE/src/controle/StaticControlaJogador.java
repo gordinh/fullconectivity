@@ -48,6 +48,7 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
     private String meuIP;
     private ControlaPartida[] minhasPartidas;
     private ControlaChat[] meusChats;
+    private boolean meuStatus;
 
     private StaticControlaJogador() {
         escuta = new Thread(new ReceptorDeMensagensDoCliente());
@@ -57,6 +58,7 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
         senha = "";
         IPdoServidor = "192.168.0.146";
         meuIP = "192.168.0.146";
+        meuStatus = false;
 
         inicializaVetorDePartidasEchat(10);
     }
@@ -86,9 +88,13 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
      * Método que instacia a janela da "sala de espera"
      */
     public synchronized void chamaSalaDeEspera() {
+        
         if (sala == null) {
+            System.out.println("\n[metodo chamaSalaDeEspera] Static controla jogador diz, não existia sala, vou chamar a sala de espera");
             sala = new SalaDeEspera(this, oponentes);
+            
         } else {
+            System.out.println("\n[metodo chamaSalaDeEspera] Static controla jogador diz, a sala existe vou atualizá-la.");
             sala.MontarListaDeConectados(oponentes);
             sala.refresh();
         }
@@ -105,8 +111,11 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
      */
     public synchronized void atualizaListaDeOponentes(String listaConcatenada) {
 
+        System.out.println("\n[metodo atualizaListaDeOponentes] Static controla jogador diz, recebi uma nova lista de conectados");
+        
         if (!oponentes.isEmpty()) {
             oponentes.clear(); // limpa a lista //
+            System.out.println("\n[metodo atualizaListaDeOponentes] Static controla jogador diz, apaguei a lista velha. Vou adicionar os novos componentes");
         }
         
         String[] aux = listaConcatenada.trim().split(","); // cada posição do vetor contém informação de um oponente //
@@ -119,7 +128,7 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
                 oponentes.add(novoOponente);
             }
         }
-
+        System.out.println("\n[metodo atualizaListaDeOponentes] Static controla jogador diz, a lista foi atualizada!");
     }
 
     /**
@@ -454,4 +463,24 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
     public void windowClosed(WindowEvent e) {
        
     }
+
+    /**
+     * Retorna (localmente) o meu status.
+     * 
+     * @return 
+     */
+    public boolean getMeuStatus() {
+        return meuStatus;
+    }
+    
+    /**
+     * Atualiza (localemnte) se estou online ou offline.
+     * 
+     * @param meuStatus 
+     */
+    public void setMeuStatus(boolean meuStatus) {
+        this.meuStatus = meuStatus;
+    }
+    
+    
 }

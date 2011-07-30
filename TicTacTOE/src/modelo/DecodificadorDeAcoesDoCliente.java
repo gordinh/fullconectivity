@@ -58,15 +58,15 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
                 oponenteAceitouDesafio(sentencaMod);
             } else if (split[1].equalsIgnoreCase("Jogada")) {
                 jogadaDoOponente(sentencaMod);
-            } else if (split[1].equalsIgnoreCase("receberMsgChat")) {                
-                 StaticControlaJogador.getInstance().atualizaJanelaChat(2,split[2],receivedPacket.getAddress().toString(), split[3]);
+            } else if (split[1].equalsIgnoreCase("receberMsgChat")) {
+                StaticControlaJogador.getInstance().atualizaJanelaChat(2, split[2], receivedPacket.getAddress().toString(), split[3]);
             } else if (split[1].equalsIgnoreCase("RespostaLogin")) {
                 confirmacaoDoLogin(split[2]);
             } else if (split[1].equalsIgnoreCase("CadastroRealizadoComSucesso")) {
                 confirmacaoDoCadastro(1);
             } else if (split[1].equalsIgnoreCase("LoginJaCadastrado")) {
                 confirmacaoDoCadastro(0);
-            } else if(split[1].equalsIgnoreCase("Classificacao")) {
+            } else if (split[1].equalsIgnoreCase("Classificacao")) {
                 StaticControlaJogador.getInstance().mostraClassificacao(sentencaMod);
             }
 
@@ -128,6 +128,7 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
 
         if (validade.equalsIgnoreCase("Valido")) {
             StaticControlaJogador.getInstance().escondeJanelaLogin(false);
+            StaticControlaJogador.getInstance().setMeuStatus(true);
         } else if (validade.equalsIgnoreCase("Invalido")) {
             JOptionPane.showMessageDialog(null, "Seu usuário ou senha nao estão corretos."
                     + "\n  Tente Novamente.", "Falha no Login", 0);
@@ -158,8 +159,10 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
      */
     public void chamarOUatualizarSalaDeEspera(String lista) {
 
-        StaticControlaJogador.getInstance().atualizaListaDeOponentes(lista);
-        StaticControlaJogador.getInstance().chamaSalaDeEspera();
+        if (StaticControlaJogador.getInstance().getMeuStatus()) {
+            StaticControlaJogador.getInstance().atualizaListaDeOponentes(lista);
+            StaticControlaJogador.getInstance().chamaSalaDeEspera();
+        }
 
     }
 
@@ -265,15 +268,13 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
 
 
     }
-    
-    
-    /*private void receberMsgChat(String sentencaMod) {
-        String[] split = sentencaMod.split(":");
-        
-        StaticControlaJogador.getInstance().atualizaJanelaChat(split[2], split[3]);
-        System.out.println("[metodo enviarMensagemChat] DecodificadorDeAcoesDoCliente diz, Mensagem de chat enviada para: " + split[2]);
-    }*/
 
+    /*private void receberMsgChat(String sentencaMod) {
+    String[] split = sentencaMod.split(":");
+    
+    StaticControlaJogador.getInstance().atualizaJanelaChat(split[2], split[3]);
+    System.out.println("[metodo enviarMensagemChat] DecodificadorDeAcoesDoCliente diz, Mensagem de chat enviada para: " + split[2]);
+    }*/
     /**
      * Metodo que envia ao servidor a solicitação da lista que contém pontuação atual dos jogadores.
      * 
@@ -287,6 +288,5 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
         } catch (UnknownHostException ex) {
             Logger.getLogger(DecodificadorDeAcoesDoCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }  
-        
+    }
 }

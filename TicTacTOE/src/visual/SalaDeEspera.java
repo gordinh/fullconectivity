@@ -42,7 +42,7 @@ public class SalaDeEspera {
         info = new JLabel("Desafie alguém =>");
         infoMSG = new JLabel("Envie mensagem =>");
         score = new JButton();
-        
+
         frame.getContentPane().add(panel);
         lista = new JList(itens);
         scrollpane = new JScrollPane(lista);
@@ -86,12 +86,12 @@ public class SalaDeEspera {
 
         info.setBounds(10, 300, 200, 70);
         infoMSG.setBounds(10, 400, 200, 70);
-        
+
         score.setIcon(new javax.swing.ImageIcon(getClass().getResource("/visual/podium.gif")));
         score.setBounds(10, 400, 173, 100);
         score.addActionListener(ctrl);
-        
-        frame.addWindowListener(ctrl);
+
+        frame.addWindowListener(ctrl); // Tratar os eventos básicos da janela, como abrir, fechar... //
     }
 
     /**
@@ -117,7 +117,8 @@ public class SalaDeEspera {
      */
     public void MontarListaDeConectados(ArrayList<Jogador> conectados) {
 
-        itens = new DefaultListModel();
+        scrollpane.remove(lista);
+        itens.clear();
         for (int i = 0; i < conectados.size(); i++) {
             if (conectados.get(i).getStatus() == 1) {
                 conectados.get(i).setNick(conectados.get(i).getNick().concat("-> ON"));
@@ -126,6 +127,10 @@ public class SalaDeEspera {
             }
             itens.addElement(conectados.get(i).getNick());
         }
+        lista = new JList(itens);
+        scrollpane.add(lista);
+        frame.repaint();
+        scrollpane.repaint();
     }
 
     public void visible(boolean b) {
@@ -146,11 +151,11 @@ public class SalaDeEspera {
         return mensagem;
     }
 
-    public JButton getScore(){
+    public JButton getScore() {
         return score;
     }
-    
-    public void refresh(){
+
+    public void refresh() {
         frame.repaint();
         panel.repaint();
         scrollpane.repaint();
