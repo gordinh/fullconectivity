@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -105,9 +106,10 @@ public class BancoOnlineDoServidor {
      * @param senha
      * @return loginValido
      */
-    public boolean fazerLogin(String nick, String senha) {
+    public boolean fazerLogin(String nick, String senha, InetAddress ip) {
         boolean loginValido = false;
-
+        String ipSemBarra[] = ip.toString().split("/");
+        
         synchronized (jogadoresCadastrados) {
 
             for (int i = 0; i < jogadoresCadastrados.size(); i++) {
@@ -115,6 +117,7 @@ public class BancoOnlineDoServidor {
                 if (jogadoresCadastrados.get(i).getNick().equalsIgnoreCase(nick)
                         && jogadoresCadastrados.get(i).getSenha().equalsIgnoreCase(senha)) {
                     jogadoresCadastrados.get(i).setStatusON();
+                    jogadoresCadastrados.get(i).setIp(ipSemBarra[1]);
                     loginValido = true;
                     break;
                 } else {

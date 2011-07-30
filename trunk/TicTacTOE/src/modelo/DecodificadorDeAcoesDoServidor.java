@@ -145,7 +145,7 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
      */
     public void validaLogin(String nick, String senha, String ip) {
 
-        boolean valido = BancoOnlineDoServidor.getInstance().fazerLogin(nick, senha);
+        boolean valido = BancoOnlineDoServidor.getInstance().fazerLogin(nick, senha, receivePacket.getAddress());
 
         Thread respostaLogin;
         if (valido) {

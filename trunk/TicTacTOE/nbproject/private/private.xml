@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/home/AndreLuiz/NetBeansProjects/TicTacTOE/src/controle/StaticControlaJogador.java</file>
+        <file>file:/home/AndreLuiz/NetBeansProjects/TicTacTOE/src/modelo/DecodificadorDeAcoesDoServidor.java</file>
+        <file>file:/home/AndreLuiz/NetBeansProjects/TicTacTOE/src/visual/SalaDeEspera.java</file>
+        <file>file:/home/AndreLuiz/NetBeansProjects/TicTacTOE/src/modelo/BancoOnlineDoServidor.java</file>
+        <file>file:/home/AndreLuiz/NetBeansProjects/TicTacTOE/src/modelo/DecodificadorDeAcoesDoCliente.java</file>
+    </open-files>
 </project-private>
