@@ -430,6 +430,8 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
         return deRetorno;
     }
 
+    
+    //********************************************************* Controle do fechamento da janela ************************************************
     public void windowOpened(WindowEvent e) {
     }
 
@@ -463,7 +465,8 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
     public void windowClosed(WindowEvent e) {
        
     }
-
+//*****************************************************************************************************************************************************************
+  
     /**
      * Retorna (localmente) o meu status.
      * 

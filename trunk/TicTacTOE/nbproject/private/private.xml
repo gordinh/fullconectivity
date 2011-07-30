@@ -3,9 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
         <file>file:/home/AndreLuiz/NetBeansProjects/TicTacTOE/src/controle/StaticControlaJogador.java</file>
-        <file>file:/home/AndreLuiz/NetBeansProjects/TicTacTOE/src/modelo/DecodificadorDeAcoesDoServidor.java</file>
         <file>file:/home/AndreLuiz/NetBeansProjects/TicTacTOE/src/visual/SalaDeEspera.java</file>
         <file>file:/home/AndreLuiz/NetBeansProjects/TicTacTOE/src/modelo/BancoOnlineDoServidor.java</file>
         <file>file:/home/AndreLuiz/NetBeansProjects/TicTacTOE/src/modelo/DecodificadorDeAcoesDoCliente.java</file>
+        <file>file:/home/AndreLuiz/NetBeansProjects/TicTacTOE/src/controle/ControlaChat.java</file>
+        <file>file:/home/AndreLuiz/NetBeansProjects/TicTacTOE/src/modelo/Jogador.java</file>
+        <file>file:/home/AndreLuiz/NetBeansProjects/TicTacTOE/src/modelo/MensagemOffline.java</file>
+        <file>file:/home/AndreLuiz/NetBeansProjects/TicTacTOE/src/tictactoe/Main.java</file>
     </open-files>
 </project-private>
