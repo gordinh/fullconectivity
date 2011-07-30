@@ -80,7 +80,7 @@ public class JanelaChat extends Observable{
      * @param quem
      * @param msg 
      */
-    public void refresh(int quem, String msg){
+    public void refresh(int quem, String msg, String hora){
         
         if(quem == 0 ){
             historico.setText(msg);}
@@ -89,7 +89,10 @@ public class JanelaChat extends Observable{
             mensagem.setText("");
         }else if(quem ==2){
             historico.setText(historico.getText() + "\n Ele disse: \n" + msg + "\n");
+        }else if(quem ==3){
+            historico.setText(historico.getText() + "\n MENSAGEM OFFLINE: \n ["+ hora+"]" + msg + "\n");
         }
+        
     }
 
     public JButton getSend(){

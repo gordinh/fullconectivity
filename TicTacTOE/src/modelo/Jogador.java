@@ -187,5 +187,11 @@ public class Jogador implements Serializable{
      mensagensOffline.add(msgoff);
     }
     
+    public void removeMensagemOFF(int index){
+        mensagensOffline.remove(index);
+    }
     
+    public ArrayList<MensagemOffline> retornarMinhasMensagensOffline(){
+        return mensagensOffline;
+    } 
 }

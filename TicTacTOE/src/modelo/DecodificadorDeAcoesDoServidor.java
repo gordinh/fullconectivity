@@ -164,6 +164,9 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
             /*} catch (UnknownHostException ex) {
             Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);
             }*/
+            
+            checarMinhasMsgOff(nick);
+            
         } else {
             String contole = ":RespostaLogin:Invalido";
             try {
@@ -269,5 +272,55 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
         BancoOnlineDoServidor.getInstance().armazenarMSGoffline(emissor, destinatario, mensagem, horaDaChegada);
 
 
+    }
+    
+    /**
+     * Verifica se um usário tem mensagens offline para serem entregues.
+     * Se tiver chama o método que as enviará.
+     * 
+     * @param nick 
+     */
+    public void checarMinhasMsgOff(String nick) {
+        ArrayList<String> temp = BancoOnlineDoServidor.getInstance().retornaListaDeMsgOffline();
+        for(int i=0; i< temp.size(); i++){
+            if(temp.get(i).equalsIgnoreCase(nick)){
+                entregarMensagensOffline(nick);
+                BancoOnlineDoServidor.getInstance().removeItemDaListaDeMsgOffline(i);
+            }
+        }
+        
+    }
+    
+    /**
+     * Entrega as mensagens offline salvas no servidor ao seu destinatário original.
+     * 
+     * @param nick 
+     */
+    private void entregarMensagensOffline(String nick) {
+       ArrayList<Jogador> temp = BancoOnlineDoServidor.getInstance().retornaListaDeCasdastrados();
+       
+       for(int i=0; i<temp.size(); i++){
+           if(temp.get(i).getNick().equalsIgnoreCase(nick)){
+               while(temp.get(i).retornarMinhasMensagensOffline() != null){
+                  
+                   String msgOffline = ":receberMsgOffline:" + temp.get(i).retornarMinhasMensagensOffline().get(0).getEmissor() + ":"
+                          + temp.get(i).retornarMinhasMensagensOffline().get(0).getConteudo() + ":" 
+                          + temp.get(i).retornarMinhasMensagensOffline().get(0).getHoraDaMensage();
+                    try {
+                        Thread entregaMsgOffline = new Thread(new EmissorUDP(msgOffline, InetAddress.getByName(temp.get(i).getIp()), 9090));
+                        try {
+                            entregaMsgOffline.wait(1000);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        entregaMsgOffline.start();
+                    } catch (UnknownHostException ex) {
+                        Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+               temp.get(i).removeMensagemOFF(0); // remove a primeira mensagem (ela já foi enviada).
+               }
+           }
+       }
+        
     }
 }
