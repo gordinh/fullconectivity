@@ -8,7 +8,11 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,9 +63,12 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
             validaRecepção();
             System.out.println("[metodo decodificador] DecodificadorDeAcoesDoServidor diz, Recebi a solicitação de retornar escore");
             retornaClassificação(receivePacket.getAddress());
-        } else if (split[1].trim().equalsIgnoreCase("desconectar")){
+        } else if (split[1].trim().equalsIgnoreCase("desconectar")) {
             validaRecepção();
             desconectarJogador(split[2]);
+        } else if (split[1].trim().equalsIgnoreCase("msgOffline")) {
+            validaRecepção();
+            tratamentaMSGoffline(split[2], split[3], split[4]);
         }
     }
 
@@ -244,11 +251,23 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
 
 
     }
-    
-    public void desconectarJogador(String nick){
-        
+
+    public void desconectarJogador(String nick) {
+
         BancoOnlineDoServidor.getInstance().fazerLogOff(nick);
         retornaListaEmBroadcast(BancoOnlineDoServidor.getInstance().getIpBroadcast());
+
+    }
+
+    public void tratamentaMSGoffline(String emissor, String destinatario, String mensagem) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("hh;mm;ss"); // Pega a hora do sistema
+       
+        String horaDaChegada = dateFormat.format(new Date());
         
+       
+        BancoOnlineDoServidor.getInstance().armazenarMSGoffline(emissor, destinatario, mensagem, horaDaChegada);
+
+
     }
 }

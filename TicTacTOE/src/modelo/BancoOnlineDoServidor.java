@@ -104,27 +104,29 @@ public class BancoOnlineDoServidor {
      * 
      * @param nick
      * @param senha
+     * @param ip
      * @return loginValido
      */
     public boolean fazerLogin(String nick, String senha, InetAddress ip) {
         boolean loginValido = false;
         String ipSemBarra[] = ip.toString().split("/");
-        
-        synchronized (jogadoresCadastrados) {
 
-            for (int i = 0; i < jogadoresCadastrados.size(); i++) {
 
-                if (jogadoresCadastrados.get(i).getNick().equalsIgnoreCase(nick)
-                        && jogadoresCadastrados.get(i).getSenha().equalsIgnoreCase(senha)) {
-                    jogadoresCadastrados.get(i).setStatusON();
-                    jogadoresCadastrados.get(i).setIp(ipSemBarra[1]);
-                    loginValido = true;
-                    break;
-                } else {
-                    loginValido = false;
-                }
+
+        for (int i = 0; i < jogadoresCadastrados.size(); i++) {
+
+            if (jogadoresCadastrados.get(i).getNick().equalsIgnoreCase(nick)
+                    && jogadoresCadastrados.get(i).getSenha().equalsIgnoreCase(senha)) {
+                jogadoresCadastrados.get(i).setStatusON();
+                jogadoresCadastrados.get(i).setIp(ipSemBarra[1]);
+                loginValido = true;
+                serializaLista();
+                break;
+            } else {
+                loginValido = false;
             }
         }
+
         return loginValido;
     }
 
@@ -177,10 +179,11 @@ public class BancoOnlineDoServidor {
         ObjectOutputStream salvaEmarquivo;
         try {
             salvaEmarquivo = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") + File.separator + "Lista.bin"));
-            //                            out = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") + File.separator + "Lista.bin"));
+
             salvaEmarquivo.writeObject(jogadoresCadastrados);
             salvaEmarquivo.flush();
             salvaEmarquivo.close();
+
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Não foi possível salvar a lista", "Erro", 0);
@@ -223,38 +226,74 @@ public class BancoOnlineDoServidor {
      * ele desconecta todos os jogadores.
      */
     public void desconectarTodos() {
-        for (int a = 0; a < jogadoresCadastrados.size(); a++) {
-            jogadoresCadastrados.get(a).setStatusOFF();
+        synchronized (jogadoresCadastrados) {
+            for (int a = 0; a < jogadoresCadastrados.size(); a++) {
+                jogadoresCadastrados.get(a).setStatusOFF();
+            }
         }
     }
-    
+
     /**
      * Retorna o tamnho da Array de jogadores cadastrados
      */
-    public int tamanhoDoArrayDeCadastrados(){
-        
-        synchronized (jogadoresCadastrados){
+    public int tamanhoDoArrayDeCadastrados() {
+
+        synchronized (jogadoresCadastrados) {
             return jogadoresCadastrados.size();
         }
     }
-    
+
     /**
      * Altera o "banco" do servidor informando que o jogador está desconectado e
      * serializa a lista essa nova configuração.
      * @param nick 
      */
-    public void fazerLogOff(String nick){
+    public void fazerLogOff(String nick) {
         System.out.println("[metodo fazer logoff] Banco online do servidor diz, Vou desconectar " + nick);
-        for (int i = 0; i < jogadoresCadastrados.size(); i++) {
-                if (jogadoresCadastrados.get(i).getNick().equalsIgnoreCase(nick))
+        synchronized (jogadoresCadastrados) {
+            for (int i = 0; i < jogadoresCadastrados.size(); i++) {
+                if (jogadoresCadastrados.get(i).getNick().equalsIgnoreCase(nick)) {
                     jogadoresCadastrados.get(i).setStatusOFF();
+                    serializaLista();
+                    break;
+                }
+            }
         }
-        serializaLista();
+
+
     }
 
+    /**
+     * Retorna o ip de broadcast
+     * @return 
+     */
     public String getIpBroadcast() {
         return ipBroadcast;
     }
-    
-    
+
+    /**
+     * Procura na lista do servidor o jogador para o qual a mensagem offline foi
+     * enviada e a armazena no seu campo mensagens offline.
+     * 
+     * @param emissor
+     * @param destinatario
+     * @param conteudo
+     * @param horaDaChegada 
+     */
+    public void armazenarMSGoffline(String emissor, String destinatario, String conteudo, String horaDaChegada) {
+        System.out.println("[metodo armazenarMSGoffline] Banco online do servidor diz, mensagem OFFLINE de " + emissor + " para " + destinatario);
+
+        synchronized (jogadoresCadastrados) {
+            for (int i = 0; i < jogadoresCadastrados.size(); i++) {
+                if (jogadoresCadastrados.get(i).getNick().equalsIgnoreCase(destinatario)) {
+                    jogadoresCadastrados.get(i).adicionaMensagemOFF(new MensagemOffline(emissor, destinatario, conteudo, horaDaChegada));
+                    serializaLista();
+                    break;
+                }
+            }
+        }
+
+
+
+    }
 }
