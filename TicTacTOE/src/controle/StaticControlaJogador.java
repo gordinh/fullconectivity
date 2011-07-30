@@ -141,7 +141,8 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
         Jogador oponente = null;
 
         for (int i = 0; i < oponentes.size(); i++) {
-            if (oponentes.get(i).getNick().equalsIgnoreCase(nick)) {
+            String[] apenasNick = oponentes.get(i).getNick().split("-");
+            if (apenasNick[0].equalsIgnoreCase(nick)) {
                 oponente = oponentes.get(i);
                 break;
             }
@@ -235,13 +236,13 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
 
             if (sala.lista.getSelectedValue() != null) {
 
-                String selected = sala.lista.getSelectedValue().toString();
-                String temp[] = verificaChatAberto(selected).split(":");
+                String[] selected = sala.lista.getSelectedValue().toString().split("-");
+                String temp[] = verificaChatAberto(selected[0]).split(":");
 
                 if (temp[0].equalsIgnoreCase("false")) {
 
-                    Jogador j = retornaOponenteDaLista(selected);
-                    criaJanelaChat(j.getNick(), j.getIp());
+                    Jogador j = retornaOponenteDaLista(selected[0]);
+                    criaJanelaChat(selected[0], j.getIp());
 
                 } else if (temp[0].equalsIgnoreCase("true")) {
 
@@ -414,7 +415,8 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
         for (int i = 0; i < meusChats.length - 1 && existe == false; i++) {
 
             if (meusChats[i] != null) {
-                if (meusChats[i].getNickOponente().equalsIgnoreCase(nickOponente)) {
+                String[] apenasNick = meusChats[i].getNickOponente().split("-");
+                if (apenasNick[0].equalsIgnoreCase(nickOponente)) {
                     posicaoDaJanelaChatNoArray = i;
                     existe = true;
                     break;
