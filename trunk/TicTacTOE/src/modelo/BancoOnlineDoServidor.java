@@ -27,10 +27,9 @@ public class BancoOnlineDoServidor {
 
     private static BancoOnlineDoServidor serverBank;
     private ArrayList<Jogador> jogadoresCadastrados; // Lista de jogadores cadastrados
+    private String ipBroadcast = "192.168.0.255";
 
     private BancoOnlineDoServidor() {
-
-
 
         // Colocar o banco pra carregar as informações de um arquivo de dados.
         if (recuperaListaSerializada() != null) {
@@ -235,4 +234,24 @@ public class BancoOnlineDoServidor {
             return jogadoresCadastrados.size();
         }
     }
+    
+    /**
+     * Altera o "banco" do servidor informando que o jogador está desconectado e
+     * serializa a lista essa nova configuração.
+     * @param nick 
+     */
+    public void fazerLogOff(String nick){
+        System.out.println("[metodo fazer logoff] Banco online do servidor diz, Vou desconectar " + nick);
+        for (int i = 0; i < jogadoresCadastrados.size(); i++) {
+                if (jogadoresCadastrados.get(i).getNick().equalsIgnoreCase(nick))
+                    jogadoresCadastrados.get(i).setStatusOFF();
+        }
+        serializaLista();
+    }
+
+    public String getIpBroadcast() {
+        return ipBroadcast;
+    }
+    
+    
 }

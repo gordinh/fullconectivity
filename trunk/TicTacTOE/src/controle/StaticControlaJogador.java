@@ -6,9 +6,16 @@ package controle;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import modelo.DecodificadorDeAcoesDoCliente;
+import modelo.EmissorUDP;
 import modelo.Jogador;
 import modelo.ReceptorDeMensagensDoCliente;
 import visual.JanelaDePontuacao;
@@ -27,7 +34,7 @@ import visual.SalaDeEspera;
  * 
  * @author AndreLuiz
  */
-public class StaticControlaJogador implements ActionListener {
+public class StaticControlaJogador implements ActionListener, WindowListener {
 
     private static StaticControlaJogador controladorEstatico;
     private JanelaLogin jLogin;
@@ -48,8 +55,8 @@ public class StaticControlaJogador implements ActionListener {
         oponentes = new ArrayList<Jogador>();
         MeuNick = "";
         senha = "";
-        IPdoServidor = "10.65.97.62";
-        meuIP = "10.65.97.37";
+        IPdoServidor = "192.168.0.146";
+        meuIP = "192.168.0.146";
 
         inicializaVetorDePartidasEchat(10);
     }
@@ -83,6 +90,7 @@ public class StaticControlaJogador implements ActionListener {
             sala = new SalaDeEspera(this, oponentes);
         } else {
             sala.MontarListaDeConectados(oponentes);
+            sala.refresh();
         }
     }
 
@@ -100,6 +108,7 @@ public class StaticControlaJogador implements ActionListener {
         if (!oponentes.isEmpty()) {
             oponentes.clear(); // limpa a lista //
         }
+        
         String[] aux = listaConcatenada.trim().split(","); // cada posição do vetor contém informação de um oponente //
 
         for (int i = 1; i <= aux.length - 1; i++) { // 0ª célula do vetor: lixo, 1ª célula: palavra de controle, 2ª célua: primeiro oponente //
@@ -240,7 +249,7 @@ public class StaticControlaJogador implements ActionListener {
 
         }
     }
-
+    
     /**
      * Retorna o ip do jogador
      * @return 
@@ -410,5 +419,39 @@ public class StaticControlaJogador implements ActionListener {
             deRetorno = "false:";
         }
         return deRetorno;
+    }
+
+    public void windowOpened(WindowEvent e) {
+    }
+
+    public void windowClosing(WindowEvent e) {
+   
+        JOptionPane.showMessageDialog(null, "Fechando sistema", "info", 1);
+        
+        //System.exit(0);
+        String desconectar = ":desconectar:" + MeuNick;
+        
+        try {
+            Thread ficarOFF = new Thread(new EmissorUDP(desconectar, InetAddress.getByName(IPdoServidor), 2495));
+            ficarOFF.start();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(StaticControlaJogador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void windowIconified(WindowEvent e) {
+    }
+
+    public void windowDeiconified(WindowEvent e) {
+    }
+
+    public void windowActivated(WindowEvent e) {
+    }
+
+    public void windowDeactivated(WindowEvent e) {
+    }
+
+    public void windowClosed(WindowEvent e) {
+       
     }
 }

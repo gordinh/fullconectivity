@@ -55,10 +55,13 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
         } else if (split[1].trim().equalsIgnoreCase("Login")) {
             validaRecepção();
             validaLogin(split[2], split[3], split[4]);
-        } else if(split[1].trim().equalsIgnoreCase("verScore")){
+        } else if (split[1].trim().equalsIgnoreCase("verScore")) {
             validaRecepção();
-            System.out.println("[metodo decodificador] DecodificadorDeAcoesDoServidor diz, Recebi a solicitação de retornar escore"); 
+            System.out.println("[metodo decodificador] DecodificadorDeAcoesDoServidor diz, Recebi a solicitação de retornar escore");
             retornaClassificação(receivePacket.getAddress());
+        } else if (split[1].trim().equalsIgnoreCase("desconectar")){
+            validaRecepção();
+            desconectarJogador(split[2]);
         }
     }
 
@@ -77,19 +80,20 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
      *
      * Método para enviar a lista de pessoas conectadas
      * para alguma cliente que requisite ou quando é cadastrado nessa lista
-     * @param dp
-     * @param nick
+     * 
+     * @param ipBroadcast
+     * 
      */
-    public void retornaListaAoCliente(String ip, String nick) {
+    public void retornaListaEmBroadcast(String ipBroadcast) {
 
-        String lista = MontarStringJogadores(nick);
+        String lista = MontarStringJogadores();
 
         System.out.println("\n [metodo retorna lista de conectados] DecodificadorDeAcoesDoServidor diz: lista montada: " + lista);
 
-        System.out.println("\n [metodo retorna lista de conectados] DecodificadorDeAcoesDoServidor diz: vou retornar a lista para " + nick);
+        //System.out.println("\n [metodo retorna lista de conectados] DecodificadorDeAcoesDoServidor diz: vou retornar a lista para " + nick);
 
         try {
-            Thread enviaLista = new Thread(new EmissorUDP(lista, InetAddress.getByName(ip), 9090));
+            Thread enviaLista = new Thread(new EmissorUDP(lista, InetAddress.getByName(ipBroadcast), 9090));
             enviaLista.start();
         } catch (UnknownHostException ex) {
             Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);
@@ -109,7 +113,7 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
      * @param nick
      * @return String lista
      */
-    public String MontarStringJogadores(String nick) {
+    public String MontarStringJogadores() {
 
         System.out.println("\n [metodo montar string jogadores] DecodificadorDeAcoesDoServidor diz: vou montar lista de jogadores conectados ");
 
@@ -121,8 +125,8 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
         // Ex.: João:10.65.99.33:5000, Douglas|10.65.128.75|2495, etc...
 
         for (int i = 0; i < listaDeRetorno.size(); i++) {
-           // if (!listaDeRetorno.get(i).getNick().equalsIgnoreCase(nick)) {
-                s = s + ":" + (listaDeRetorno.get(i).getNick()) + ":" + listaDeRetorno.get(i).getIp() + ":" + listaDeRetorno.get(i).getStatus() +  ",";
+            // if (!listaDeRetorno.get(i).getNick().equalsIgnoreCase(nick)) {
+            s = s + ":" + (listaDeRetorno.get(i).getNick()) + ":" + listaDeRetorno.get(i).getIp() + ":" + listaDeRetorno.get(i).getStatus() + ",";
             //}
 
         }
@@ -149,7 +153,7 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
             //try {
             respostaLogin = new Thread(new EmissorUDP(contole, receivePacket.getAddress(), 9090)); //InetAddress.getByName(ip)
             respostaLogin.start();
-            retornaListaAoCliente("10.65.103.255", nick);
+            retornaListaEmBroadcast(BancoOnlineDoServidor.getInstance().getIpBroadcast());
             /*} catch (UnknownHostException ex) {
             Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);
             }*/
@@ -185,30 +189,30 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
                 Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-        }else{
+        } else {
             try {
                 Thread cadastroRealizado = new Thread(new EmissorUDP(":LoginJaCadastrado", InetAddress.getByName(ip), 9090));
                 cadastroRealizado.start();
             } catch (UnknownHostException ex) {
                 Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);
             }
-        
+
         }
-        
+
     }
 
     /**
      * Metodo responsável por retornar a lista de escore ao usuário
      */
     public void retornaClassificação(InetAddress ipRetorno) {
-       
+
         System.out.println("\n [metodo retornar classificacao] DecodificadorDeAcoesDoServidor diz:  Pegar a lista dos jogadores");
-           
+
         Jogador[] jogadorEpontuacao = new Jogador[BancoOnlineDoServidor.getInstance().tamanhoDoArrayDeCadastrados()];
 
         ArrayList<Jogador> copiaDaLista = BancoOnlineDoServidor.getInstance().retornaListaDeCasdastrados();
-        
-        
+
+
         for (int i = 0; i < copiaDaLista.size(); i++) {
             jogadorEpontuacao[i] = copiaDaLista.get(i);
             System.out.println("i =" + i);
@@ -229,15 +233,22 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
 
         String classificacao = ":Classificacao:";
         for (int k = 0; k < jogadorEpontuacao.length; k++) {
-        // System.out.println("Score: " + jogadorEpontuacao[k].getNick() + jogadorEpontuacao[k].getPontuacao());
+            // System.out.println("Score: " + jogadorEpontuacao[k].getNick() + jogadorEpontuacao[k].getPontuacao());
             classificacao = classificacao + "," + jogadorEpontuacao[k].getNick() + " -> " + jogadorEpontuacao[k].getPontuacao() + ",";
         }
-        
+
         System.out.println("\n [metodo retornar classificacao] DecodificadorDeAcoesDoServidor diz:  O escore é: " + classificacao);
-        
+
         Thread enviaClassificacao = new Thread(new EmissorUDP(classificacao, ipRetorno, 9090));
         enviaClassificacao.start();
+
+
+    }
+    
+    public void desconectarJogador(String nick){
         
+        BancoOnlineDoServidor.getInstance().fazerLogOff(nick);
+        retornaListaEmBroadcast(BancoOnlineDoServidor.getInstance().getIpBroadcast());
         
     }
 }
