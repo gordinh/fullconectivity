@@ -29,6 +29,7 @@ public class BancoOnlineDoServidor {
     private static BancoOnlineDoServidor serverBank;
     private ArrayList<Jogador> jogadoresCadastrados; // Lista de jogadores cadastrados
     private String ipBroadcast = "192.168.0.255";
+    private ArrayList<String> controleDeMensagensOFFLINE; // Lista de jogadores que tem mensagens off para ser entregue.
 
     private BancoOnlineDoServidor() {
 
@@ -40,6 +41,14 @@ public class BancoOnlineDoServidor {
         } else {
             jogadoresCadastrados = new ArrayList<Jogador>(); // iniciar lista de jogadores cadastrados.
             System.out.println("[ metodo contrutor] BancoOnlineDoServidor diz: Não existia lista no arquivo. ");
+        }
+        
+        if (recuperaControleDeMensagensOffline() != null) {
+            controleDeMensagensOFFLINE = recuperaControleDeMensagensOffline();            
+            System.out.println("[ metodo contrutor] BancoOnlineDoServidor diz: Recuperei a lista de MSG OFFLINE do arquivo");
+        } else {
+            controleDeMensagensOFFLINE = new ArrayList<String>(); // iniciar lista de jogadores cadastrados.
+            System.out.println("[ metodo contrutor] BancoOnlineDoServidor diz: Não existia lista de MSG OFFLINE no arquivo. ");
         }
     }
 
@@ -288,12 +297,98 @@ public class BancoOnlineDoServidor {
                 if (jogadoresCadastrados.get(i).getNick().equalsIgnoreCase(destinatario)) {
                     jogadoresCadastrados.get(i).adicionaMensagemOFF(new MensagemOffline(emissor, destinatario, conteudo, horaDaChegada));
                     serializaLista();
+                    controleDeMensagensOFFLINE.add(destinatario);
                     break;
                 }
             }
         }
+    }
+    
+        /**
+     * 
+     * Este método serializa a lista (de controle do servidor) dos jogadores 
+     * cadastrados quem tem mensagens offline para ser entregue. A lista também 
+     * é armazenada na pasta onde projeto está salvo.
+     * 
+     */
+    private void serializaControleDeMensagensOffline() {
+        ObjectOutputStream salvaEmarquivo;
+        try {
+            salvaEmarquivo = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") + File.separator + "MsgOFF.bin"));
 
+            salvaEmarquivo.writeObject(controleDeMensagensOFFLINE);
+            salvaEmarquivo.flush();
+            salvaEmarquivo.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Não foi possível salvar a lista", "Erro", 0);
+        }
 
 
     }
+
+    /**
+      * Este método recupera a lista  serializada (de controle do servidor) dos jogadores 
+      * cadastrados quem tem mensagens offline para ser entregue.
+      */
+    public ArrayList<String> recuperaControleDeMensagensOffline() {
+
+        ArrayList<String> temp = null;
+
+        ObjectInputStream recuperaDoArquivo;
+
+        try {
+
+            recuperaDoArquivo = new ObjectInputStream(new FileInputStream(System.getProperty("user.dir") + File.separator + "MsgOFF.bin"));
+
+            try {
+
+                temp = (ArrayList<String>) recuperaDoArquivo.readObject();
+                recuperaDoArquivo.close();
+
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(BancoOnlineDoServidor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(BancoOnlineDoServidor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return temp;
+    }
+    
+    /**
+     * Retorna o tamanho da lista de mensagens offline.
+     * 
+     * @return 
+     */
+    public int tamanhoDoArrayDeMsgOffline(){
+        return controleDeMensagensOFFLINE.size();
+    }
+    
+    /**
+     * Retorna a lista de mensagens offline.
+     * 
+     * @return 
+     */
+    public ArrayList<String> retornaListaDeMsgOffline(){
+        return controleDeMensagensOFFLINE;
+    }
+    
+    /**
+     * Remove um jogador da lista de controle de mensgens offline a serem entregues.
+     * @param index 
+     */
+    public void removeItemDaListaDeMsgOffline(int index){
+        controleDeMensagensOFFLINE.remove(index);
+    }
+    
+    /**
+     * Remove primeira mensagem da lista de mensagem offline de um jogador.
+     * @param index 
+     */
+    public void removeMsgOfflineDoJogador(int index){
+    jogadoresCadastrados.get(index).removeMensagemOFF(1);
+    }
+    
 }

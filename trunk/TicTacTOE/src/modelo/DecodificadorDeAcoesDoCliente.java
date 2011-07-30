@@ -59,7 +59,7 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
             } else if (split[1].equalsIgnoreCase("Jogada")) {
                 jogadaDoOponente(sentencaMod);
             } else if (split[1].equalsIgnoreCase("receberMsgChat")) {
-                StaticControlaJogador.getInstance().atualizaJanelaChat(2, split[2], receivedPacket.getAddress().toString(), split[3]);
+                StaticControlaJogador.getInstance().atualizaJanelaChat(2, split[2], receivedPacket.getAddress().toString(), split[3], "");
             } else if (split[1].equalsIgnoreCase("RespostaLogin")) {
                 confirmacaoDoLogin(split[2]);
             } else if (split[1].equalsIgnoreCase("CadastroRealizadoComSucesso")) {
@@ -68,6 +68,8 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
                 confirmacaoDoCadastro(0);
             } else if (split[1].equalsIgnoreCase("Classificacao")) {
                 StaticControlaJogador.getInstance().mostraClassificacao(sentencaMod);
+            } else if (split[1].equalsIgnoreCase("receberMsgOffline")){
+                StaticControlaJogador.getInstance().atualizaJanelaChat(3,split[2],receivedPacket.getAddress().toString() ,split[3], split[4]);
             }
 
 
@@ -288,5 +290,9 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
         } catch (UnknownHostException ex) {
             Logger.getLogger(DecodificadorDeAcoesDoCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+   public void mostraMsgOffline(String emissor, String conteudo, String hora) {
+        
     }
 }

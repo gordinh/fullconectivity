@@ -8,8 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import modelo.EmissorUDP;
@@ -66,7 +64,7 @@ public class ControlaChat implements ActionListener {
 
         System.out.println("O conteúdo é:" + janela.getMensagem());
 
-        janela.refresh(1, janela.getMensagem());
+        janela.refresh(1, janela.getMensagem(), "");
 
         Jogador verificaStatus = StaticControlaJogador.getInstance().retornaOponenteDaLista(nickOponente);
 

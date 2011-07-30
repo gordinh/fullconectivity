@@ -331,19 +331,19 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
      * @param nickOpnt
      * @param msg
      */
-    public void atualizaJanelaChat(int quem, String nickOpnt, String ipOpnt, String msg) {
+    public void atualizaJanelaChat(int quem, String nickOpnt, String ipOpnt, String msg, String hora) {
 
         String verificaExistencia[] = verificaChatAberto(nickOpnt.concat("-> ON")).split(":");
 
         if (verificaExistencia[0].equalsIgnoreCase("true")) {
 
-            meusChats[Integer.parseInt(verificaExistencia[1])].janela.refresh(quem, msg);
+            meusChats[Integer.parseInt(verificaExistencia[1])].janela.refresh(quem, msg, hora);
             meusChats[Integer.parseInt(verificaExistencia[1])].janela.Visible(true);
             meusChats[Integer.parseInt(verificaExistencia[1])].janela.janelaSinalizaQuandoChegaMensagemNova();
 
         } else if (verificaExistencia[0].equalsIgnoreCase("false")) {
             int local = criaJanelaChat(nickOpnt.concat("-> ON"), ipOpnt);
-            meusChats[local].janela.refresh(quem, msg);
+            meusChats[local].janela.refresh(quem, msg, hora);
         }
 
 
