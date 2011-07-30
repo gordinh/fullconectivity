@@ -90,6 +90,8 @@ public class SalaDeEspera {
         score.setIcon(new javax.swing.ImageIcon(getClass().getResource("/visual/podium.gif")));
         score.setBounds(10, 400, 173, 100);
         score.addActionListener(ctrl);
+        
+        frame.addWindowListener(ctrl);
     }
 
     /**
@@ -146,5 +148,11 @@ public class SalaDeEspera {
 
     public JButton getScore(){
         return score;
+    }
+    
+    public void refresh(){
+        frame.repaint();
+        panel.repaint();
+        scrollpane.repaint();
     }
 }
