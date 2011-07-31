@@ -68,8 +68,8 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
                 confirmacaoDoCadastro(0);
             } else if (split[1].equalsIgnoreCase("Classificacao")) {
                 StaticControlaJogador.getInstance().mostraClassificacao(sentencaMod);
-            } else if (split[1].equalsIgnoreCase("receberMsgOffline")){
-                StaticControlaJogador.getInstance().atualizaJanelaChat(3,split[2],receivedPacket.getAddress().toString() ,split[3], split[4]);
+            } else if (split[1].equalsIgnoreCase("receberMsgOffline")) {
+                StaticControlaJogador.getInstance().atualizaJanelaChat(3, split[2], receivedPacket.getAddress().toString(), split[3], split[4]);
             }
 
 
@@ -160,10 +160,15 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
      * @param lista 
      */
     public void chamarOUatualizarSalaDeEspera(String lista) {
+        boolean condição = true;
 
-        if (StaticControlaJogador.getInstance().getMeuStatus()) {
-            StaticControlaJogador.getInstance().atualizaListaDeOponentes(lista);
-            StaticControlaJogador.getInstance().chamaSalaDeEspera();
+        while (condição) {
+            System.out.println("Aguardando confirmação de status...");
+            if (StaticControlaJogador.getInstance().getMeuStatus()==true) {
+                StaticControlaJogador.getInstance().atualizaListaDeOponentes(lista);
+                StaticControlaJogador.getInstance().chamaSalaDeEspera();
+                condição = false;
+            }
         }
 
     }
@@ -292,7 +297,6 @@ public class DecodificadorDeAcoesDoCliente implements Runnable {
         }
     }
 
-   public void mostraMsgOffline(String emissor, String conteudo, String hora) {
-        
+    public void mostraMsgOffline(String emissor, String conteudo, String hora) {
     }
 }

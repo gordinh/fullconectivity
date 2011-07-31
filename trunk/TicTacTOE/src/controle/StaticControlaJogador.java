@@ -242,7 +242,8 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
                 if (temp[0].equalsIgnoreCase("false")) {
 
                     Jogador j = retornaOponenteDaLista(selected[0]);
-                    criaJanelaChat(selected[0], j.getIp());
+                    //criaJanelaChat(selected[0], j.getIp());
+                    atualizaJanelaChat(0, selected[0], j.getIp(), "", "");
 
                 } else if (temp[0].equalsIgnoreCase("true")) {
 
@@ -331,9 +332,9 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
      * @param nickOpnt
      * @param msg
      */
-    public void atualizaJanelaChat(int quem, String nickOpnt, String ipOpnt, String msg, String hora) {
+    public synchronized void atualizaJanelaChat(int quem, String nickOpnt, String ipOpnt, String msg, String hora) {
 
-        String verificaExistencia[] = verificaChatAberto(nickOpnt.concat("-> ON")).split(":");
+        String verificaExistencia[] = verificaChatAberto(nickOpnt).split(":");  //.concat("-> ON")).split(":");
 
         if (verificaExistencia[0].equalsIgnoreCase("true")) {
 
@@ -342,8 +343,16 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
             meusChats[Integer.parseInt(verificaExistencia[1])].janela.janelaSinalizaQuandoChegaMensagemNova();
 
         } else if (verificaExistencia[0].equalsIgnoreCase("false")) {
-            int local = criaJanelaChat(nickOpnt.concat("-> ON"), ipOpnt);
-            meusChats[local].janela.refresh(quem, msg, hora);
+            //int local = criaJanelaChat(nickOpnt, ipOpnt); // nickOpnt.concat("-> ON")
+            //eusChats[local].janela.refresh(quem, msg, hora);
+            
+            for (int i = 0; i < meusChats.length - 1; i++) {
+                if (meusChats[i] == null) {
+                    meusChats[i] = new ControlaChat(nickOpnt);
+                    meusChats[i].janela.refresh(quem, msg, hora);
+                    break;
+                }
+            }
         }
 
 
@@ -389,7 +398,7 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
         if (temp[0].equalsIgnoreCase("false")) {
             for (int i = 0; i < meusChats.length - 1; i++) {
                 if (meusChats[i] == null) {
-                    meusChats[i] = new ControlaChat(nickOponente, ipOponente);
+                    meusChats[i] = new ControlaChat(nickOponente);
                     posicaoDaNovaJanelaDeChat = i;
                     break;
                 }

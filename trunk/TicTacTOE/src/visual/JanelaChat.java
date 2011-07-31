@@ -6,12 +6,12 @@
 package visual;
 
 import controle.ControlaChat;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Observable;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**
@@ -23,9 +23,11 @@ public class JanelaChat extends Observable{
 
     JFrame frame;
     JPanel panel;    
-    JTextField historico;
+    JTextArea historico;
     JTextField mensagem;
     JButton send;
+    JScrollPane spHistorico, spMensagem;
+    
     
     public JanelaChat(ControlaChat ouvinte) {
         
@@ -37,15 +39,19 @@ public class JanelaChat extends Observable{
        // Instaciação dos componentes
        frame = new JFrame("chat com: " + ouvinte.getNickOponente());
        panel = new JPanel();
-       historico = new JTextField();
+       historico = new JTextArea();
        mensagem = new JTextField();
        send = new JButton("Enviar");
+       spMensagem = new JScrollPane(mensagem);
+       spHistorico = new JScrollPane(historico);
 
        //Amarrando os componentes
        frame.getContentPane().add(panel);
        
-       panel.add(mensagem);
-       panel.add(historico);
+       panel.add(spMensagem); 
+       //panel.add(mensagem);
+       panel.add(spHistorico);
+      // panel.add(historico);
        panel.add(send);
 
        //Propriedades da Janela
@@ -60,8 +66,8 @@ public class JanelaChat extends Observable{
        
 
        //Posicionamento dos Componentes       
-       historico.setBounds( 10, 10, 280, 200);
-       mensagem.setBounds(10, 215, 280, 80);
+       spHistorico.setBounds( 10, 10, 280, 200);
+       spMensagem.setBounds(10, 215, 280, 80);
        send.setBounds(110, 295, 80, 20);
 
 
@@ -85,12 +91,17 @@ public class JanelaChat extends Observable{
         if(quem == 0 ){
             historico.setText(msg);}
         else if(quem ==1){
-            historico.setText(historico.getText() + "\n Eu disse: \n" + msg + "\n");
+            //historico.setText(historico.getText() + "\n Eu disse: \n" + msg + "\n");
+            historico.append("\n Eu Disse: \n " + msg);
+            
             mensagem.setText("");
         }else if(quem ==2){
-            historico.setText(historico.getText() + "\n Ele disse: \n" + msg + "\n");
+           // historico.setText(historico.getText() + "\n Ele disse: \n" + msg + "\n");
+            historico.append("\n Ele Disse: \n " + msg);
         }else if(quem ==3){
-            historico.setText(historico.getText() + "\n MENSAGEM OFFLINE: \n ["+ hora+"]" + msg + "\n");
+            String[] hhmmss = hora.split(";");
+            //historico.setText(historico.getText() + "\n MENSAGEM OFFLINE: \n ["+ hora+"]" + msg + "\n");
+            historico.append("\n MENSAGEM OFFLINE: \n [" +hhmmss[0]+":"+hhmmss[1]+":"+hhmmss[2] +"] " + msg);
         }
         
     }
