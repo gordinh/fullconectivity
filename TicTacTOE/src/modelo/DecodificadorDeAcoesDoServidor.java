@@ -308,11 +308,6 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
                           + temp.get(i).retornarMinhasMensagensOffline().get(0).getHoraDaMensage();
                     try {
                         Thread entregaMsgOffline = new Thread(new EmissorUDP(msgOffline, InetAddress.getByName(temp.get(i).getIp()), 9090));
-                        try {
-                            entregaMsgOffline.wait(1000);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);
-                        }
                         entregaMsgOffline.start();
                     } catch (UnknownHostException ex) {
                         Logger.getLogger(DecodificadorDeAcoesDoServidor.class.getName()).log(Level.SEVERE, null, ex);

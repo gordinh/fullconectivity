@@ -21,12 +21,12 @@ import visual.JanelaChat;
 public class ControlaChat implements ActionListener {
 
     String nickOponente;
-    String ipOponente[];
+    //String ipOponente[];
     JanelaChat janela;
 
-    public ControlaChat(String nick, String ip) {
+    public ControlaChat(String nick) {
         nickOponente = nick;
-        ipOponente = ip.split("/");
+      //  ipOponente = ip.split("/");
         janela = new JanelaChat(this);
         // janela.addObserver(this);
     }
@@ -50,9 +50,7 @@ public class ControlaChat implements ActionListener {
     
     
     }*/
-    public String getIpOponente() {
-        return ipOponente[0];
-    }
+    
 
     public String getNickOponente() {
         return nickOponente;
@@ -65,11 +63,12 @@ public class ControlaChat implements ActionListener {
         System.out.println("O conteúdo é:" + janela.getMensagem());
 
         janela.refresh(1, janela.getMensagem(), "");
-
-        Jogador verificaStatus = StaticControlaJogador.getInstance().retornaOponenteDaLista(nickOponente);
+        
+        String[] nickSemStatus = nickOponente.split("-");
+        Jogador verificaStatus = StaticControlaJogador.getInstance().retornaOponenteDaLista(nickSemStatus[0]);
 
         if (verificaStatus.getStatus() == 0) { // manda ao servidor (mensagem offline)
-            String[] nickSemStatus = nickOponente.split("-");
+            
 
             System.out.println("[metodo actionPerformed] ControlaChat diz, enviando ao servidor mensagem offline de "
                     + StaticControlaJogador.getInstance().getNick() + " para " + nickSemStatus[0]);
@@ -84,8 +83,10 @@ public class ControlaChat implements ActionListener {
 
         } else if (verificaStatus.getStatus() == 1) { // manda ao oponente (mensagem online)
             try {
+                Jogador temp = StaticControlaJogador.getInstance().retornaOponenteDaLista(nickSemStatus[0]);
+                
                 String conteudo = ":receberMsgChat:" + StaticControlaJogador.getInstance().getNick() + ":" + euDisse;
-                Thread EnviarMsgChat = new Thread(new EmissorUDP(conteudo, InetAddress.getByName(ipOponente[0]), 9090));
+                Thread EnviarMsgChat = new Thread(new EmissorUDP(conteudo, InetAddress.getByName(temp.getIp()), 9090));
                 EnviarMsgChat.start();
             } catch (UnknownHostException ex) {
                 Logger.getLogger(ControlaChat.class.getName()).log(Level.SEVERE, null, ex);

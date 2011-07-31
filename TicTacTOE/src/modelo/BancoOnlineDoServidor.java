@@ -43,12 +43,12 @@ public class BancoOnlineDoServidor {
             System.out.println("[ metodo contrutor] BancoOnlineDoServidor diz: Não existia lista no arquivo. ");
         }
         
-        if (recuperaControleDeMensagensOffline() != null) {
-            controleDeMensagensOFFLINE = recuperaControleDeMensagensOffline();            
-            System.out.println("[ metodo contrutor] BancoOnlineDoServidor diz: Recuperei a lista de MSG OFFLINE do arquivo");
-        } else {
+        if (recuperaControleDeMensagensOffline() == null) {
             controleDeMensagensOFFLINE = new ArrayList<String>(); // iniciar lista de jogadores cadastrados.
             System.out.println("[ metodo contrutor] BancoOnlineDoServidor diz: Não existia lista de MSG OFFLINE no arquivo. ");
+        } else {
+            controleDeMensagensOFFLINE = recuperaControleDeMensagensOffline();            
+            System.out.println("[ metodo contrutor] BancoOnlineDoServidor diz: Recuperei a lista de MSG OFFLINE do arquivo");            
         }
     }
 
@@ -298,6 +298,7 @@ public class BancoOnlineDoServidor {
                     jogadoresCadastrados.get(i).adicionaMensagemOFF(new MensagemOffline(emissor, destinatario, conteudo, horaDaChegada));
                     serializaLista();
                     controleDeMensagensOFFLINE.add(destinatario);
+                    serializaControleDeMensagensOffline();
                     break;
                 }
             }
