@@ -68,7 +68,7 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
             desconectarJogador(split[2]);
         } else if (split[1].trim().equalsIgnoreCase("msgOffline")) {
             validaRecepção();
-            tratamentaMSGoffline(split[2], split[3], split[4]);
+            tratamentaMSGoffline(Integer.parseInt(split[2]),split[3], split[4], split[5]);
         }
     }
 
@@ -262,14 +262,14 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
 
     }
 
-    public void tratamentaMSGoffline(String emissor, String destinatario, String mensagem) {
+    public void tratamentaMSGoffline(int numeroDaMensagem, String emissor, String destinatario, String mensagem) {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("hh;mm;ss"); // Pega a hora do sistema
        
         String horaDaChegada = dateFormat.format(new Date());
         
        
-        BancoOnlineDoServidor.getInstance().armazenarMSGoffline(emissor, destinatario, mensagem, horaDaChegada);
+        BancoOnlineDoServidor.getInstance().armazenarMSGoffline(numeroDaMensagem, emissor, destinatario, mensagem, horaDaChegada);
 
 
     }
@@ -301,9 +301,10 @@ public class DecodificadorDeAcoesDoServidor implements Runnable {
        
        for(int i=0; i<temp.size(); i++){
            if(temp.get(i).getNick().equalsIgnoreCase(nick)){
-               while(temp.get(i).retornarMinhasMensagensOffline() != null){
+               while(!temp.get(i).retornarMinhasMensagensOffline().isEmpty()){
                   
-                   String msgOffline = ":receberMsgOffline:" + temp.get(i).retornarMinhasMensagensOffline().get(0).getEmissor() + ":"
+                   String msgOffline = ":receberMsgOffline:" +temp.get(i).retornarMinhasMensagensOffline().get(0).getNumeroDaMensasagem() 
+                          + ":"+temp.get(i).retornarMinhasMensagensOffline().get(0).getEmissor() + ":"
                           + temp.get(i).retornarMinhasMensagensOffline().get(0).getConteudo() + ":" 
                           + temp.get(i).retornarMinhasMensagensOffline().get(0).getHoraDaMensage();
                     try {

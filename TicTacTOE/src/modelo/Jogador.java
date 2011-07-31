@@ -22,7 +22,7 @@ public class Jogador implements Serializable{
     private int status;
     private int pontuacao;
     private String senha;
-    private ArrayList<MensagemOffline> mensagensOffline;
+    private ArrayList<Mensagem> mensagensOffline;
 
     /**
      * Este construtor é deve ser usado apenas pelo servidor no ato do cadastro
@@ -39,7 +39,7 @@ public class Jogador implements Serializable{
         this.porta = 9090;
         this.status = 0;
         this.pontuacao = 0;
-        this.mensagensOffline = new ArrayList<MensagemOffline>();
+        this.mensagensOffline = new ArrayList<Mensagem>();
     }
     
     /**
@@ -183,7 +183,7 @@ public class Jogador implements Serializable{
         this.senha = senha;
     }
     
-    public void adicionaMensagemOFF(MensagemOffline msgoff){
+    public void adicionaMensagemOFF(Mensagem msgoff){
      mensagensOffline.add(msgoff);
     }
     
@@ -191,7 +191,7 @@ public class Jogador implements Serializable{
         mensagensOffline.remove(index);
     }
     
-    public ArrayList<MensagemOffline> retornarMinhasMensagensOffline(){
+    public ArrayList<Mensagem> retornarMinhasMensagensOffline(){
         return mensagensOffline;
     } 
 }

@@ -289,13 +289,13 @@ public class BancoOnlineDoServidor {
      * @param conteudo
      * @param horaDaChegada 
      */
-    public void armazenarMSGoffline(String emissor, String destinatario, String conteudo, String horaDaChegada) {
+    public void armazenarMSGoffline(int numeroDaMensagem, String emissor, String destinatario, String conteudo, String horaDaChegada) {
         System.out.println("[metodo armazenarMSGoffline] Banco online do servidor diz, mensagem OFFLINE de " + emissor + " para " + destinatario);
 
         synchronized (jogadoresCadastrados) {
             for (int i = 0; i < jogadoresCadastrados.size(); i++) {
                 if (jogadoresCadastrados.get(i).getNick().equalsIgnoreCase(destinatario)) {
-                    jogadoresCadastrados.get(i).adicionaMensagemOFF(new MensagemOffline(emissor, destinatario, conteudo, horaDaChegada));
+                    jogadoresCadastrados.get(i).adicionaMensagemOFF(new Mensagem(numeroDaMensagem ,emissor, destinatario, conteudo, horaDaChegada));
                     serializaLista();
                     controleDeMensagensOFFLINE.add(destinatario);
                     serializaControleDeMensagensOffline();

@@ -23,12 +23,14 @@ public class ControlaChat implements ActionListener {
     String nickOponente;
     //String ipOponente[];
     JanelaChat janela;
+    int numeroDaMensagem;
 
     public ControlaChat(String nick) {
         nickOponente = nick;
       //  ipOponente = ip.split("/");
         janela = new JanelaChat(this);
         // janela.addObserver(this);
+        numeroDaMensagem = 0;
     }
 
     /* public void update(Observable o, Object arg) {
@@ -74,9 +76,10 @@ public class ControlaChat implements ActionListener {
                     + StaticControlaJogador.getInstance().getNick() + " para " + nickSemStatus[0]);
 
             try {
-                String conteudo = ":msgOffline:" + StaticControlaJogador.getInstance().getNick() + ":" + nickSemStatus[0] + ":" + euDisse;
+                String conteudo = ":msgOffline:"+ numeroDaMensagem +":"+StaticControlaJogador.getInstance().getNick() + ":" + nickSemStatus[0] + ":" + euDisse;
                 Thread EnviarMsgChatOffline = new Thread(new EmissorUDP(conteudo, InetAddress.getByName(StaticControlaJogador.getInstance().getIPdoServidor()), 2495));
                 EnviarMsgChatOffline.start();
+                numeroDaMensagem++;
             } catch (UnknownHostException ex) {
                 Logger.getLogger(ControlaChat.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -85,9 +88,10 @@ public class ControlaChat implements ActionListener {
             try {
                 Jogador temp = StaticControlaJogador.getInstance().retornaOponenteDaLista(nickSemStatus[0]);
                 
-                String conteudo = ":receberMsgChat:" + StaticControlaJogador.getInstance().getNick() + ":" + euDisse;
+                String conteudo = ":receberMsgChat:"+ numeroDaMensagem +":" +StaticControlaJogador.getInstance().getNick() + ":" + euDisse;
                 Thread EnviarMsgChat = new Thread(new EmissorUDP(conteudo, InetAddress.getByName(temp.getIp()), 9090));
                 EnviarMsgChat.start();
+                numeroDaMensagem++;
             } catch (UnknownHostException ex) {
                 Logger.getLogger(ControlaChat.class.getName()).log(Level.SEVERE, null, ex);
             }
