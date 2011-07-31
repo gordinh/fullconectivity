@@ -17,6 +17,8 @@ import javax.swing.JOptionPane;
 import modelo.DecodificadorDeAcoesDoCliente;
 import modelo.EmissorUDP;
 import modelo.Jogador;
+import modelo.Mensagem;
+import modelo.OrdenadorDeMensagens;
 import modelo.ReceptorDeMensagensDoCliente;
 import visual.JanelaDePontuacao;
 import visual.JanelaLogin;
@@ -49,6 +51,8 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
     private ControlaPartida[] minhasPartidas;
     private ControlaChat[] meusChats;
     private boolean meuStatus;
+    private ArrayList<Mensagem> bufferDeMensagensRecebidas;
+    
 
     private StaticControlaJogador() {
         escuta = new Thread(new ReceptorDeMensagensDoCliente());
@@ -59,8 +63,12 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
         IPdoServidor = "192.168.0.146";
         meuIP = "192.168.0.146";
         meuStatus = false;
+        bufferDeMensagensRecebidas = new ArrayList<Mensagem>();
 
-        inicializaVetorDePartidasEchat(10);
+        inicializaVetorDePartidasEchat(50);
+        
+        Thread ordenaEexibe = new Thread(new OrdenadorDeMensagens());
+        ordenaEexibe.start();
     }
 
     /**
@@ -496,5 +504,24 @@ public class StaticControlaJogador implements ActionListener, WindowListener {
         this.meuStatus = meuStatus;
     }
     
+    /**
+     * Adiciona um item no buffer de mensagens recebidas
+     * 
+     * @param msg 
+     */
+    public void adicionaNoBufferDeMensagensRecebidas(Mensagem msg){
+        bufferDeMensagensRecebidas.add(msg);
+    }
     
+    /**
+     * Retorna  o buffer de mensagens recebidas.
+     * @return 
+     */
+    public ArrayList<Mensagem> retornaBufferDeMesagnsRecebidas(){
+        return bufferDeMensagensRecebidas;
+    }
+    
+    public void removerDoBufferDeMensagensRecebidas(int index){
+        bufferDeMensagensRecebidas.remove(index);
+    }
 }

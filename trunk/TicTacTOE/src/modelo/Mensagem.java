@@ -12,20 +12,49 @@ import java.io.Serializable;
  * 
  * @author AndreLuiz
  */
-public class MensagemOffline implements Serializable{
+public class Mensagem implements Serializable{
     
     private String emissor;
     private String destinatario;
     private String horaDaMensage;
     private String conteudo;
+    private int numeroDaMensasagem;
+    private int quem;
     
-    public MensagemOffline (String emissor, String destinataio, String conteudo ,String horaDaMensagem ){
+    /**
+     * Contrutor usado em mensagens offline.
+     * 
+     * @param emissor
+     * @param destinataio
+     * @param conteudo
+     * @param horaDaMensagem 
+     */
+    public Mensagem (int numeroDaMensgem, String emissor, String destinataio, String conteudo ,String horaDaMensagem ){
+        this.numeroDaMensasagem = numeroDaMensgem;
         this.emissor = emissor;
         this.destinatario = destinataio;
         this.conteudo = conteudo;
         this.horaDaMensage = horaDaMensagem;
         
     }
+    
+    /**
+     * Contrutor usado no buffer de mensagens do cliente.
+     * 
+     * @param quem
+     * @param numeroDaMensagem
+     * @param emissor
+     * @param conteudo 
+     */
+    public Mensagem(int quem, int numeroDaMensagem, String emissor, String conteudo){
+        this.quem = quem;
+        this.numeroDaMensasagem = numeroDaMensagem;
+        this.emissor = emissor;
+        this.conteudo = conteudo;
+        this.horaDaMensage = "";
+        
+    }
+    
 
     public String getConteudo() {
         return conteudo;
@@ -57,6 +86,14 @@ public class MensagemOffline implements Serializable{
 
     public void setHoraDaMensage(String horaDaMensage) {
         this.horaDaMensage = horaDaMensage;
+    }
+
+    public int getNumeroDaMensasagem() {
+        return numeroDaMensasagem;
+    }
+
+    public void setNumeroDaMensasagem(int numeroDaMensasagem) {
+        this.numeroDaMensasagem = numeroDaMensasagem;
     }
     
     
