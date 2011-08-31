@@ -1,0 +1,37 @@
+Pinagem FPGA
+
+COLUNAS..................................
+
+20 - coluna 8 (laranja)
+21 - coluna 7 (cinza)
+26 - coluna 4 (branco)
+27 - coluna 3 (azul)
+32 - coluna 2 (amarelo)
+33 - coluna 1 (verde)
+38 - coluna 6 (roxo)
+39 - coluna 5 (marrom)
+
+LINHAS.................................. a partir do fio laranja
+Luzes Vermelhas
+	19 - linha 1 (fio 1)
+	24 - linha 2 (fio 2)
+	25 - linha 5 (fio 3)
+	30 - linha 6 (fio 4)
+	31 - linha 7 (fio 5)
+	36 - linha 8 (fio 6)
+	30 - linha 3 (fio 7)
+	42 - linha 4 (fio 8)
+Luzes Verdes
+	22 - linha 1 (fio 1)
+	23 - linha 2 (fio 2)
+	28 - linha 5 (fio 3)
+	29 - linha 6 (fio 4)
+	34 - linha 7 (fio 5)
+	35 - linha 8 (fio 6)
+	40 - linha 3 (fio 7)
+	41 - linha 4 (fio 8)
+
+Botões..................................
+|10| |11| |12| |9 |
+     |16| |13| |14|
+     |17| |18| |15|
