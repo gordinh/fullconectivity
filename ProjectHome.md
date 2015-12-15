@@ -1,0 +1,1 @@
+Armazenar todos os códigos fonte dos produtos do PBL de concorrencia e conectividade do semestre 2011.1, implementando todos os projetos com os padrões MVC + Observer
